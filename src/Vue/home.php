@@ -288,6 +288,151 @@
             </div>
             <?php endif; ?>
         </div> 
+        <!-- Intégration du Chatbot -->
+        <link rel="stylesheet" href="/chatbot/chatbot.css">
+        <script src="/chatbot/chatbot.js" defer></script>
+        <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
+        <!-- Intégration du Chatbot -->
+        <div id="chatbot-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+            <div id="chatbot-trigger" style="background-color: #3b82f6; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div id="chatbot-body" style="display: none; background-color: white; border: 1px solid #e5e7eb; border-radius: 10px; width: 350px; height: 500px; flex-direction: column; position: absolute; bottom: 70px; right: 0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                <div style="background-color: #3b82f6; color: white; padding: 12px 15px; border-top-left-radius: 10px; border-top-right-radius: 10px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+                    Assistant de vente
+                    <i id="chatbot-close" class="fas fa-times"></i>
+                </div>
+                <div id="chatbot-messages" style="flex-grow: 1; overflow-y: auto; padding: 15px;">
+                    <div class="message bot-message" style="background-color: #f3f4f6; color: #1f2937; margin-right: auto; margin-bottom: 12px; max-width: 80%; padding: 8px 12px; border-radius: 15px; font-size: 14px; line-height: 1.4; border-bottom-left-radius: 5px;">
+                        Bonjour ! Je suis votre assistant de vente. Comment puis-je vous aider aujourd'hui ?
+                    </div>
+                </div>
+                <div style="display: flex; padding: 10px; border-top: 1px solid #e5e7eb; background-color: #f9fafb;">
+                    <input type="text" id="chatbot-input" placeholder="Tapez votre message..." style="flex-grow: 1; padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 20px; outline: none; font-size: 14px;">
+                    <button id="chatbot-send" style="background-color: #3b82f6; color: white; border: none; border-radius: 20px; padding: 8px 15px; margin-left: 8px; cursor: pointer; transition: background-color 0.2s;">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .typing-indicator {
+                display: flex;
+                padding: 10px;
+            }
+            .typing-indicator span {
+                height: 8px;
+                width: 8px;
+                margin: 0 2px;
+                background-color: #9ca3af;
+                border-radius: 50%;
+                display: inline-block;
+                animation: bounce 1.3s infinite ease-in-out;
+            }
+            .typing-indicator span:nth-child(2) { animation-delay: 0.15s; }
+            .typing-indicator span:nth-child(3) { animation-delay: 0.3s; }
+            @keyframes bounce {
+                0%, 60%, 100% { transform: translateY(0); }
+                30% { transform: translateY(-5px); }
+            }
+        </style>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatbotTrigger = document.getElementById('chatbot-trigger');
+            const chatbotBody = document.getElementById('chatbot-body');
+            const chatbotClose = document.getElementById('chatbot-close');
+            const chatInput = document.getElementById('chatbot-input');
+            const chatSend = document.getElementById('chatbot-send');
+            const chatMessages = document.getElementById('chatbot-messages');
+            let isOpen = false;
+
+            // Ouvrir/fermer le chat
+            function toggleChat() {
+                isOpen = !isOpen;
+                chatbotBody.style.display = isOpen ? 'flex' : 'none';
+                if (isOpen) {
+                    chatInput.focus();
+                }
+            }
+
+            chatbotTrigger.addEventListener('click', toggleChat);
+            chatbotClose.addEventListener('click', toggleChat);
+
+            // Envoyer un message
+            function sendMessage() {
+                const message = chatInput.value.trim();
+                if (!message) return;
+
+                // Ajouter le message de l'utilisateur
+                addMessage(message, 'user');
+                chatInput.value = '';
+
+                // Afficher l'indicateur de frappe
+                const typingIndicator = document.createElement('div');
+                typingIndicator.className = 'typing-indicator';
+                typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+                chatMessages.appendChild(typingIndicator);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+
+                // Envoyer au serveur Python
+                fetch('http://localhost:5000/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message: message })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Supprimer l'indicateur de frappe
+                    chatMessages.removeChild(typingIndicator);
+                    
+                    // Afficher la réponse du bot
+                    if (data.response) {
+                        addMessage(data.response, 'bot');
+                    } else {
+                        addMessage('Désolé, je n\'ai pas pu traiter votre demande.', 'bot');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    chatMessages.removeChild(typingIndicator);
+                    addMessage('Une erreur est survenue. Veuillez réessayer plus tard.', 'bot');
+                });
+            }
+
+            // Ajouter un message à la conversation
+            function addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}-message`;
+                messageDiv.style.cssText = `
+                    background-color: ${sender === 'user' ? '#3b82f6' : '#f3f4f6'};
+                    color: ${sender === 'user' ? 'white' : '#1f2937'};
+                    margin-${sender === 'user' ? 'left' : 'right'}: auto;
+                    margin-bottom: 12px;
+                    max-width: 80%;
+                    padding: 8px 12px;
+                    border-radius: 15px;
+                    font-size: 14px;
+                    line-height: 1.4;
+                    border-bottom-${sender === 'user' ? 'right' : 'left'}-radius: 5px;
+                `;
+                messageDiv.textContent = text;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // Gestionnaires d'événements
+            chatSend.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+        </script>
     </body>
     <script>
         function openModal(id) {
