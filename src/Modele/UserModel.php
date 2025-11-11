@@ -6,6 +6,58 @@ use DateTime;
 class UserModel {
     private $db; 
     
+    /**
+     * Récupère un utilisateur par son ID
+     * 
+     * @param int $id ID de l'utilisateur
+     * @return mixed Retourne l'utilisateur sous forme d'objet ou false si non trouvé
+     */
+    public function getUserById($id) {
+        try {
+            $query = "SELECT * FROM utilisateur WHERE id_utilisateur = :id";
+            $stmt = $this->db->prepare($query);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            if ($stmt->rowCount() > 0) {
+                // Créer un objet utilisateur à partir des données
+                $userData = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                // Créer un objet utilisateur basique avec les méthodes nécessaires
+                $user = new class($userData) {
+                    private $data;
+                    
+                    public function __construct($data) {
+                        $this->data = $data;
+                    }
+                    
+                    public function getPassword() {
+                        return $this->data['mot_de_passe'] ?? $this->data['mot_de_pass'] ?? null;
+                    }
+                    
+                    public function __get($name) {
+                        return $this->data[$name] ?? null;
+                    }
+                    
+                    public function __set($name, $value) {
+                        $this->data[$name] = $value;
+                    }
+                };
+                
+                return $user;
+            }
+            
+            return false;
+            
+        } catch (\PDOException $e) {
+            error_log("Erreur PDO lors de la récupération de l'utilisateur: " . $e->getMessage());
+            return false;
+        } catch (\Exception $e) {
+            error_log("Erreur lors de la récupération de l'utilisateur: " . $e->getMessage());
+            return false;
+        }
+    }
+    
     public function __construct($db) {
         error_log("Constructeur UserModel appelé");
         error_log("Type de db reçu: " . gettype($db));
@@ -23,6 +75,79 @@ class UserModel {
         
         $this->db = $db;
         error_log("Connexion PDO correctement initialisée dans UserModel");
+    }
+    
+    /**
+     * Met à jour le mot de passe d'un utilisateur
+     * 
+     * @param int $userId ID de l'utilisateur
+     * @param string $newPassword Nouveau mot de passe en clair
+     * @return bool True si la mise à jour a réussi, false sinon
+     */
+    public function updatePassword($userId, $newPassword) {
+        error_log("Début de la méthode updatePassword pour l'utilisateur ID: " . $userId);
+        
+        try {
+            // Vérifier si le mot de passe n'est pas vide
+            if (empty($newPassword)) {
+                error_log("Erreur: Le nouveau mot de passe est vide");
+                return false;
+            }
+            
+            // Hasher le nouveau mot de passe
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+            error_log("Mot de passe haché généré");
+            
+            // Préparer la requête de mise à jour avec le bon nom de colonne
+            $query = "UPDATE utilisateur SET mot_de_pass = :password WHERE id_utilisateur = :userId";
+            error_log("Requête SQL: " . $query);
+            
+            $stmt = $this->db->prepare($query);
+            
+            if ($stmt === false) {
+                $error = $this->db->errorInfo();
+                error_log("Erreur de préparation de la requête: " . print_r($error, true));
+                return false;
+            }
+            
+            // Lier les paramètres
+            $bind1 = $stmt->bindValue(':password', $hashedPassword);
+            $bind2 = $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
+            
+            if ($bind1 === false || $bind2 === false) {
+                $error = $stmt->errorInfo();
+                error_log("Erreur lors du binding des paramètres: " . print_r($error, true));
+                return false;
+            }
+            
+            // Exécuter la requête
+            $result = $stmt->execute();
+            
+            if ($result === false) {
+                $error = $stmt->errorInfo();
+                error_log("Erreur d'exécution de la requête: " . print_r($error, true));
+                return false;
+            }
+            
+            $rowCount = $stmt->rowCount();
+            error_log("Nombre de lignes affectées: " . $rowCount);
+            
+            // Vérifier si la mise à jour a réussi
+            if ($result && $rowCount > 0) {
+                error_log("Mot de passe mis à jour avec succès pour l'utilisateur ID: " . $userId);
+                return true;
+            } else {
+                error_log("Aucune ligne mise à jour. L'utilisateur avec l'ID $userId existe-t-il?");
+                return false;
+            }
+            
+        } catch (\PDOException $e) {
+            error_log("Erreur PDO lors de la mise à jour du mot de passe: " . $e->getMessage());
+            return false;
+        } catch (\Exception $e) {
+            error_log("Erreur lors de la mise à jour du mot de passe: " . $e->getMessage());
+            return false;
+        }
     }
 
     // Fonction pour ajouter un utilisateur à la base de données
@@ -488,6 +613,132 @@ class UserModel {
 
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
+    
+    /**
+     * Met à jour les informations d'un utilisateur et son adresse
+     * 
+     * @param array $data Tableau contenant les données à mettre à jour
+     * @return bool True si la mise à jour a réussi, false sinon
+     */
+    public function updateUserInfo($data) {
+        error_log("Début de updateUserInfo avec les données: " . print_r($data, true));
+        
+        // Vérifier que l'ID utilisateur est fourni
+        if (!isset($data['id_utilisateur'])) {
+            error_log("Erreur: ID utilisateur manquant");
+            return false;
+        }
+        
+        // Démarrer une transaction
+        $this->db->beginTransaction();
+        
+        try {
+            // Mettre à jour la table utilisateur
+            $sqlUser = "UPDATE utilisateur SET 
+                       nom_utilisateur = :nom_utilisateur, 
+                       prenom = :prenom, 
+                       couriel = :couriel,
+                       telephone = :telephone
+                       WHERE id_utilisateur = :id_utilisateur";
+            
+            $stmtUser = $this->db->prepare($sqlUser);
+            $userParams = [
+                ':nom_utilisateur' => $data['nom_utilisateur'],
+                ':prenom' => $data['prenom'],
+                ':couriel' => $data['courriel'],
+                ':telephone' => $data['telephone'],
+                ':id_utilisateur' => $data['id_utilisateur']
+            ];
+            
+            error_log("Exécution de la requête utilisateur avec les paramètres: " . print_r($userParams, true));
+            $userUpdated = $stmtUser->execute($userParams);
+            
+            if (!$userUpdated) {
+                throw new Exception("Échec de la mise à jour des informations utilisateur");
+            }
+            
+            // Vérifier si l'utilisateur a une adresse existante
+            $sqlCheckAddress = "SELECT id_adresse FROM utilisateur_adresse WHERE id_utilisateur = :id_utilisateur";
+            $stmtCheck = $this->db->prepare($sqlCheckAddress);
+            $stmtCheck->execute([':id_utilisateur' => $data['id_utilisateur']]);
+            $addressId = $stmtCheck->fetchColumn();
+            
+            if ($addressId) {
+                // Mettre à jour l'adresse existante
+                $sqlAddress = "UPDATE adresse SET 
+                              rue = :rue,
+                              ville = :ville,
+                              code_postal = :code_postal,
+                              province = :province,
+                              pays = :pays
+                              WHERE id_adresse = :id_adresse";
+                
+                $addressParams = [
+                    ':rue' => $data['rue'] ?? null,
+                    ':ville' => $data['ville'] ?? null,
+                    ':code_postal' => $data['code_postal'] ?? null,
+                    ':province' => $data['province'] ?? null,
+                    ':pays' => $data['pays'] ?? null,
+                    ':id_adresse' => $addressId
+                ];
+                
+                error_log("Mise à jour de l'adresse existante avec les paramètres: " . print_r($addressParams, true));
+                $addressUpdated = $this->db->prepare($sqlAddress)->execute($addressParams);
+                
+                if (!$addressUpdated) {
+                    throw new Exception("Échec de la mise à jour de l'adresse");
+                }
+            } else if (isset($data['rue']) && !empty($data['rue'])) {
+                // Créer une nouvelle adresse si elle n'existe pas
+                $sqlInsertAddress = "INSERT INTO adresse (rue, ville, code_postal, province, pays) 
+                                   VALUES (:rue, :ville, :code_postal, :province, :pays)";
+                
+                $addressParams = [
+                    ':rue' => $data['rue'],
+                    ':ville' => $data['ville'] ?? null,
+                    ':code_postal' => $data['code_postal'] ?? null,
+                    ':province' => $data['province'] ?? null,
+                    ':pays' => $data['pays'] ?? null
+                ];
+                
+                error_log("Création d'une nouvelle adresse avec les paramètres: " . print_r($addressParams, true));
+                $stmtAddress = $this->db->prepare($sqlInsertAddress);
+                $addressCreated = $stmtAddress->execute($addressParams);
+                
+                if (!$addressCreated) {
+                    throw new Exception("Échec de la création de l'adresse");
+                }
+                
+                $newAddressId = $this->db->lastInsertId();
+                
+                // Lier l'adresse à l'utilisateur
+                $sqlLinkAddress = "INSERT INTO utilisateur_adresse (id_utilisateur, id_adresse) VALUES (:id_utilisateur, :id_adresse)";
+                $linkParams = [
+                    ':id_utilisateur' => $data['id_utilisateur'],
+                    ':id_adresse' => $newAddressId
+                ];
+                
+                error_log("Liaison de l'adresse à l'utilisateur avec les paramètres: " . print_r($linkParams, true));
+                $linkCreated = $this->db->prepare($sqlLinkAddress)->execute($linkParams);
+                
+                if (!$linkCreated) {
+                    throw new Exception("Échec de la liaison de l'adresse à l'utilisateur");
+                }
+            }
+            
+            // Tout s'est bien passé, on valide la transaction
+            $this->db->commit();
+            error_log("Mise à jour des informations utilisateur réussie");
+            return true;
+            
+        } catch (Exception $e) {
+            // En cas d'erreur, on annule les modifications
+            $this->db->rollBack();
+            error_log("Erreur lors de la mise à jour des informations utilisateur: " . $e->getMessage());
+            error_log("Stack trace: " . $e->getTraceAsString());
+            return false;
+        }
+    }
 
     // Récupérer un utilisateur par email pour la connexion
     public function getElementByEmailForLogin($email) {
@@ -661,25 +912,65 @@ class UserModel {
     }
 
     /**
-     * Récupère les commandes d'un utilisateur avec leurs statuts
+     * Récupère les commandes d'un utilisateur avec pagination et filtrage par statut
+     * 
+     * @param int $userId ID de l'utilisateur
+     * @param int $page Numéro de page (commence à 1)
+     * @param int $perPage Nombre d'éléments par page
+     * @param string $statut Filtre par statut (optionnel)
+     * @return array Tableau contenant les commandes et les informations de pagination
      */
-    public function getUserOrders($userId) {
-        // Préparer la requête SQL
-        $sql = "SELECT * FROM commande WHERE id_utilisateur = :userId";
+    public function getUserOrders($userId, $page = 1, $perPage = 5, $statut = null) {
+        // Calculer l'offset
+        $offset = ($page - 1) * $perPage;
         
-        // Préparer la déclaration PDO
+        // Préparer la requête SQL de base
+        $sql = "SELECT SQL_CALC_FOUND_ROWS * FROM commande WHERE id_utilisateur = :userId";
+        $params = [':userId' => $userId];
+        
+        // Ajouter le filtre par statut si spécifié
+        if ($statut !== null && $statut !== '') {
+            $sql .= " AND statut = :statut";
+            $params[':statut'] = $statut;
+        }
+        
+        // Ajouter le tri et la pagination
+        $sql .= " ORDER BY date_commande DESC LIMIT :offset, :perPage";
+        
+        // Préparer et exécuter la requête
         $stmt = $this->db->prepare($sql);
         
         // Lier les paramètres
-        $stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+        }
         
-        // Exécuter la requête
+        // Lier les paramètres de pagination
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->bindValue(':perPage', (int)$perPage, PDO::PARAM_INT);
+        
         $stmt->execute();
         
         // Récupérer les résultats
-        $commande = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $commandes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         
-        return $commande;
+        // Récupérer le nombre total de résultats (pour la pagination)
+        $total = $this->db->query('SELECT FOUND_ROWS()')->fetchColumn();
+        $totalPages = ceil($total / $perPage);
+        
+        return [
+            'commandes' => $commandes,
+            'pagination' => [
+                'total' => $total,
+                'per_page' => $perPage,
+                'current_page' => $page,
+                'total_pages' => $totalPages,
+                'has_more' => $page < $totalPages
+            ],
+            'filters' => [
+                'statut' => $statut
+            ]
+        ];
     }
 }
 

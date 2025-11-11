@@ -51,5 +51,33 @@ class PromotionModel {
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    /**
+     * Supprime les associations d'une promotion avec les produits
+     * 
+     * @param int $id_promotion ID de la promotion
+     * @return bool Succès de l'opération
+     */
+    public function supprimerAssociationsProduits($id_promotion)
+    {
+        $query = "DELETE FROM produitpromotion WHERE id_promotion = :id_promotion";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id_promotion', $id_promotion, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+
+    /**
+     * Supprime une promotion de la base de données
+     * 
+     * @param int $id_promotion ID de la promotion à supprimer
+     * @return bool Succès de l'opération
+     */
+    public function supprimerPromotion($id_promotion)
+    {
+        $query = "DELETE FROM promotions WHERE id_promotion = :id_promotion";
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id_promotion', $id_promotion, PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 }
 ?>

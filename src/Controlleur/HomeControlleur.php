@@ -15,8 +15,18 @@ class HomeControlleur {
 
     public function index() {
         $produitModel = new ProduitModel($this->db);
-        $produits = $produitModel->getTousLesProduitsAvecPromotions();
+        
+        // Récupérer le numéro de page depuis l'URL, par défaut 1
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $page = max(1, $page); // S'assurer que la page est au moins 1
+        
+        // Récupérer les produits avec pagination (8 par page)
+        $result = $produitModel->getTousLesProduitsAvecPromotions($page, 8);
+        
+        $produits = $result['produits'];
+        $pagination = $result['pagination'];
         $panier = $_SESSION['panier'] ?? [];
+        
         require_once '../src/vue/home.php';
     }
 

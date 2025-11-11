@@ -2,13 +2,28 @@
 use App\Modele\CommandeModel;
 use App\Controlleur\CommandeControlleur;
 
+// Démarrer la session si elle n'est pas déjà démarrée
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
 $pdo = getConnection(); 
 $commandeModel = new CommandeModel($pdo);
 $commandeController = new CommandeControlleur($commandeModel);
-$commandeController->index();
 $utilisateurEstConnecte = isset($_SESSION['id_utilisateur']) && !empty($_SESSION['id_utilisateur']);
 
-$orders = $commandeController->listCommandes();
+// Récupérer les commandes en fonction du rôle de l'utilisateur
+if ($utilisateurEstConnecte) {
+    $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+    if ($isAdmin) {
+        $orders = $commandeModel->getAllCommandes();
+    } else {
+        $orders = $commandeModel->getCommandesByUser($_SESSION['id_utilisateur']);
+    }
+} else {
+    $orders = [];
+}
+
 $index = 1;
 ?>
 
@@ -84,50 +99,50 @@ $index = 1;
                                         </span>
                                     </td>
                                     <td class="px-4 py-2">
-                                        <form method="post" class="flex space-x-2">
-                                            <input type="hidden" name="id_commande" value="<?= $order['id_commande']; ?>">
+                                        <div class="flex space-x-2">
                                             <!-- Bouton pour traiter la commande -->
-                                            <a href="/commande/editer/id_commande=<?= $order['id_commande']; ?>/action=traiter" 
-                                                class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 flex items-center justify-center" 
-                                                <?= ($order['statut'] !== 'En attente') ? 'style="pointer-events: none; opacity: 0.6;"' : ''; ?>>
-                                                <i class="bi bi-gear-fill"></i> 
+                                            <a href="?action=update_status&id_commande=<?= $order['id_commande']; ?>&statut=En+traitement" 
+                                               class="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600 flex items-center justify-center" 
+                                               <?= ($order['statut'] !== 'En attente') ? 'style="opacity: 0.6; pointer-events: none;"' : ''; ?>>
+                                                <i class="bi bi-gear-fill"></i>
                                             </a>
                                             <!-- Bouton pour expédier la commande -->
-                                            <a href="/commande/editer/id_commande=<?= $order['id_commande']; ?>/action=expedier" 
-                                                class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 flex items-center justify-center" 
-                                                <?= ($order['statut'] !== 'En traitement') ? 'style="pointer-events: none; opacity: 0.6;"' : ''; ?>>
-                                                <i class="bi bi-truck"></i> 
+                                            <a href="?action=update_status&id_commande=<?= $order['id_commande']; ?>&statut=En+expédition" 
+                                               class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 flex items-center justify-center" 
+                                               <?= ($order['statut'] !== 'En traitement') ? 'style="opacity: 0.6; pointer-events: none;"' : ''; ?>>
+                                                <i class="bi bi-truck"></i>
                                             </a>
                                             <!-- Bouton pour livrer la commande -->
-                                            <a href="/commande/editer/id_commande=<?= $order['id_commande']; ?>/action=livrer" 
-                                                class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center justify-center" 
-                                                <?= ($order['statut'] !== 'En expédition') ? 'style="pointer-events: none; opacity: 0.6;"' : ''; ?>>
-                                                <i class="bi bi-check-circle-fill"></i> 
+                                            <a href="?action=update_status&id_commande=<?= $order['id_commande']; ?>&statut=Livrée" 
+                                               class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 flex items-center justify-center" 
+                                               <?= ($order['statut'] !== 'En expédition') ? 'style="opacity: 0.6; pointer-events: none;"' : ''; ?>>
+                                                <i class="bi bi-check-circle-fill"></i>
                                             </a>
-                                            <!-- Bouton pour annuler la commande -->
-                                            <button type="button" 
-                                                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center" 
-                                                <?= ($order['statut'] === 'Livrée' || $order['statut'] === 'Payée') ? 'style="pointer-events: none; opacity: 0.6;"' : ''; ?> 
-                                                data-bs-toggle="modal" data-bs-target="#modalAnnulerCommande<?= $order['id_commande']; ?>">
-                                                <i class="bi bi-x-circle-fill"></i> 
-                                            </button>
-                                        </form>
+                                            <?php if (in_array($order['statut'], ['En attente', 'En traitement'])): ?>
+                                            <form action="/commande/annuler/<?= $order['id_commande']; ?>" method="POST" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir annuler cette commande ?');">
+                                                <input type="hidden" name="_method" value="POST">
+                                                <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?? ''; ?>">
+                                                <button type="submit" class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
+                                                    <i class="bi bi-x-circle-fill"></i>
+                                                </button>
+                                            </form>
+                                            <?php endif; ?>
+                                        </div>
                                     </td>
                                 </tr>
-                                <!-- Modal de confirmation pour l'annulation -->
-                                <div class="modal fade" id="modalAnnulerCommande<?= $order['id_commande']; ?>" tabindex="-1" aria-labelledby="modalAnnulerCommandeLabel" aria-hidden="true">
+                                <div class="modal fade" id="modalAnnulerCommande<?= $order['id_commande']; ?>" tabindex="-1" aria-hidden="true">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="modalAnnulerCommandeLabel">Confirmer l'annulation</h5>
+                                                <h5 class="modal-title">Confirmer l'annulation</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
                                             </div>
                                             <div class="modal-body">
-                                                Êtes-vous sûr de vouloir annuler la commande : <strong><?= $order['id_commande']; ?></strong> ? Cette action est irréversible.
+                                                Êtes-vous sûr de vouloir annuler la commande : <strong>#<?= $order['id_commande']; ?></strong> ?
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                                <a href="/commande/editer/id_commande=<?= $order['id_commande']; ?>/action=annuler" class="btn btn-danger">
+                                                <a href="?action=update_status&id_commande=<?= $order['id_commande']; ?>&statut=Annulée" class="btn btn-danger">
                                                     Confirmer l'annulation
                                                 </a>
                                             </div>

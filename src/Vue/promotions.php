@@ -50,7 +50,7 @@ $produits = $produitsController->afficherProduits(); // Produits pour le modal
                         <div class="bg-white p-6 rounded-lg w-96 shadow-lg">
                             <!-- <h3 class="text-lg font-semibold mb-4">Ajouter une promotion</h3> -->
                             <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center"> Ajouter une promotion </h3>
-                            <form action="/promotion/add" method="POST">
+                            <form action="/admin/promotion/add" method="POST">
                                 <div class="mb-4">
                                     <label for="product" class="block text-sm font-medium text-gray-700">Produit</label>
                                     <select name="id_produit" id="product" class="w-full border-gray-300 rounded mt-1" required>
@@ -81,10 +81,29 @@ $produits = $produitsController->afficherProduits(); // Produits pour le modal
                         </div>
                     </div>
                     <?php
-                        if (isset($_GET['success']) && $_GET['success'] == 1) {
-                            echo '<p class="text-green-500">La promotion a été ajoutée avec succès.</p>';
-                        } elseif (isset($_GET['error'])) {
-                            echo '<p class="text-red-500">Une erreur est survenue.</p>';
+                        if (isset($_SESSION['success_message'])) {
+                            echo '<div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                                <span class="block sm:inline">' . htmlspecialchars($_SESSION['success_message']) . '</span>
+                                <span class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display=\'none\'">
+                                    <svg class="fill-current h-6 w-6 text-green-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <title>Close</title>
+                                        <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
+                                    </svg>
+                                </span>
+                            </div>';
+                            unset($_SESSION['success_message']); // Supprimer le message après affichage
+                        }
+                        if (isset($_SESSION['error_message'])) {
+                            echo '<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                                <span class="block sm:inline">' . htmlspecialchars($_SESSION['error_message']) . '</span>
+                                <span class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.style.display=\'none\'">
+                                    <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                        <title>Close</title>
+                                        <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/>
+                                    </svg>
+                                </span>
+                            </div>';
+                            unset($_SESSION['error_message']); // Supprimer le message après affichage
                         }
                     ?>
                     <!-- Tableau des promotions -->
@@ -96,7 +115,7 @@ $produits = $produitsController->afficherProduits(); // Produits pour le modal
                                     <th class="py-2 px-4 border">Réduction</th>
                                     <th class="py-2 px-4 border">Date de début</th>
                                     <th class="py-2 px-4 border">Date de fin</th>
-                                    <th class="py-2 px-4 border">Actions</th>
+                                    <!-- <th class="py-2 px-4 border">Actions</th> -->
                                 </tr>
                             </thead>
                             <tbody>
@@ -108,14 +127,14 @@ $produits = $produitsController->afficherProduits(); // Produits pour le modal
                                             <td class="py-2 px-4"><?= htmlspecialchars($promotion['date_debut']) ?></td>
                                             <td class="py-2 px-4"><?= htmlspecialchars($promotion['date_fin']) ?></td>
                                             <td class="py-2 px-4 space-x-2">
-                                                <a href="admin_edit_promo.php?id=<?= htmlspecialchars($promotion['id_promotion']) ?>" 
-                                                class="bg-yellow-500 text-white py-1 px-3 rounded hover:bg-yellow-600 transition">
-                                                    Modifier
-                                                </a>
-                                                <a href="admin_delete_promo.php?id=<?= htmlspecialchars($promotion['id_promotion']) ?>" 
-                                                class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition">
-                                                    Supprimer
-                                                </a>
+                                                <form action="/admin/promotion/delete/<?= htmlspecialchars($promotion['id_promotion']) ?>" method="POST" style="display: inline;">
+                                                    <input type="hidden" name="_method" value="DELETE">
+                                                    <button type="submit" 
+                                                            class="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition"
+                                                            onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette promotion ?')">
+                                                        Supprimer
+                                                    </button>
+                                                </form>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

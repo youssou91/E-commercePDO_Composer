@@ -46,7 +46,34 @@ class PromotionControlleur {
         return $this->model->getAllPromotions();
     }
     
-    //... (autres méthodes pour manipuler les promotions)
+    // Supprimer une promotion
+    public function delete($id) {
+        if (!isset($id)) {
+            throw new \Exception("ID de promotion manquant");
+        }
+
+        try {
+            // Supprimer d'abord les associations de produits
+            $this->model->supprimerAssociationsProduits($id);
+            
+            // Puis supprimer la promotion
+            $result = $this->model->supprimerPromotion($id);
+            
+            if ($result) {
+                // Rediriger vers la liste des promotions avec un message de succès
+                $_SESSION['success_message'] = 'La promotion a été supprimée avec succès.';
+                header('Location: /admin/promotions');
+                exit;
+            } else {
+                throw new \Exception("Erreur lors de la suppression de la promotion");
+            }
+        } catch (\Exception $e) {
+            $_SESSION['error_message'] = 'Erreur lors de la suppression : ' . $e->getMessage();
+            header('Location: /admin/promotions');
+            exit;
+        }
+    }
+    
     // Méthode pour afficher le formulaire d'ajout de promotion
     public function addForm() {
         // Vous pouvez récupérer les produits ici pour les envoyer à la vue
@@ -69,8 +96,9 @@ class PromotionControlleur {
             // Associer le produit à la promotion
             $this->model->associerProduitPromotion($id_produit, $id_promotion);
 
-            // Rediriger vers la page des promotions ou afficher un message de succès
-            require_once '../src/vue/Promotions.php';
+            // Rediriger vers la page des promotions avec un message de succès
+            $_SESSION['success_message'] = 'La promotion a été ajoutée avec succès.';
+            header('Location: /admin/promotions');
             exit;
         }
     }

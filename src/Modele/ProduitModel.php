@@ -128,8 +128,20 @@ class ProduitModel {
         return null; // Retourne null en cas d'échec
     }
     
-    public  function getTousLesProduitsAvecPromotions() {
-        global $connect; 
+    public function getTousLesProduitsAvecPromotions($page = 1, $perPage = 8) {
+        $offset = ($page - 1) * $perPage;
+        
+        // Requête pour compter le nombre total de produits
+        $countQuery = "
+            SELECT COUNT(DISTINCT p.id_produit) as total
+            FROM Produits p
+            LEFT JOIN ProduitPromotion pp ON p.id_produit = pp.id_produit
+            LEFT JOIN Promotions pr ON pp.id_promotion = pr.id_promotion
+            WHERE p.quantite > 0
+            AND (pr.id_promotion IS NULL OR (pr.date_debut <= CURDATE() AND pr.date_fin >= CURDATE()))
+        ";
+        
+        // Requête pour récupérer les produits paginés
         $query = "
             SELECT 
                 p.id_produit,
@@ -139,20 +151,38 @@ class ProduitModel {
                 p.chemin_image,
                 p.description,
                 p.couleurs,
-                MAX(pr.valeur) AS promo_valeur, -- Prendre la valeur maximale de la promotion
-                MAX(pr.type) AS promo_type      -- Prendre le type de promotion correspondant
+                MAX(pr.valeur) AS promo_valeur,
+                MAX(pr.type) AS promo_type
             FROM Produits p
             LEFT JOIN ProduitPromotion pp ON p.id_produit = pp.id_produit
             LEFT JOIN Promotions pr ON pp.id_promotion = pr.id_promotion
             WHERE p.quantite > 0
             AND (pr.id_promotion IS NULL OR (pr.date_debut <= CURDATE() AND pr.date_fin >= CURDATE()))
-            GROUP BY p.id_produit, p.nom, p.prix_unitaire, p.quantite;
-
+            GROUP BY p.id_produit, p.nom, p.prix_unitaire, p.quantite, p.chemin_image, p.description, p.couleurs
+            LIMIT :offset, :perPage
         ";
+        
+        // Exécution de la requête de comptage
+        $countStmt = $this->pdo->prepare($countQuery);
+        $countStmt->execute();
+        $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+        $totalPages = ceil($total / $perPage);
+        
+        // Exécution de la requête de sélection
         $stmt = $this->pdo->prepare($query);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+        $stmt->bindValue(':perPage', (int)$perPage, PDO::PARAM_INT);
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+        
+        return [
+            'produits' => $stmt->fetchAll(PDO::FETCH_ASSOC),
+            'pagination' => [
+                'page' => $page,
+                'perPage' => $perPage,
+                'total' => $total,
+                'totalPages' => $totalPages
+            ]
+        ];
     }
 
    
@@ -177,19 +207,29 @@ class ProduitModel {
         }
     }
 
-    public function updateProduit($id, $nom, $prix, $quantite, $id_categorie, $model, $courte_description, $longue_description = null, $couleurs = null, $chemin_image = null) {
+    public function updateProduit($id, $nom, $prix, $quantite, $model, $courte_description, $description = null) {
         try {
-            // Vérifier et convertir les couleurs en chaîne si c'est un tableau
-            if (is_array($couleurs)) {
-               
-                $couleurs = implode(',', $couleurs);
-            }
-            
             $sql = "UPDATE produits 
-                    SET nom = ?, prix_unitaire = ?, quantite = ?, id_categorie = ?, model = ?, courte_description = ?, longue_description = ?, couleurs = ?, chemin_image = ?
+                    SET nom = ?, 
+                        prix_unitaire = ?, 
+                        quantite = ?, 
+                        model = ?, 
+                        courte_description = ?, 
+                        description = ?
                     WHERE id_produit = ?";
+            
+            $params = [
+                $nom, 
+                $prix, 
+                $quantite, 
+                $model, 
+                $courte_description, 
+                $description,
+                $id
+            ];
+            
             $stmt = $this->pdo->prepare($sql);
-            $stmt->execute([$nom, $prix, $quantite, $id_categorie, $model, $courte_description, $longue_description, $couleurs, $chemin_image, $id]);
+            $stmt->execute($params);
         } catch (PDOException $e) {
             error_log("Erreur SQL : " . $e->getMessage());
             throw new Exception("Impossible de mettre à jour le produit.");

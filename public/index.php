@@ -18,6 +18,74 @@ define('DEBUG_MODE', true); // Mettre à false en production
 
 // Configuration du rapport d'erreurs
 error_reporting(E_ALL);
+
+// Vérifier si c'est une action de modification de commande
+if (isset($_POST['action']) && $_POST['action'] === 'modifier_commande' && isset($_POST['id_commande']) && isset($_POST['statut'])) {
+    try {
+        // Démarrer la session si nécessaire
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        // Vérifier si l'utilisateur est connecté
+        if (!isset($_SESSION['id_utilisateur'])) {
+            throw new Exception("Vous devez être connecté pour effectuer cette action");
+        }
+
+        // Inclure la configuration de la base de données
+        require_once __DIR__ . '/../config/db.php';
+        
+        // Établir la connexion à la base de données
+        try {
+            $pdo = new PDO("mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4", DB_USER, DB_PASS);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            throw new Exception("Erreur de connexion à la base de données: " . $e->getMessage());
+        }
+        
+        // Inclure les modèles nécessaires
+        require_once __DIR__ . '/../src/Modele/CommandeModel.php';
+        
+        // Créer une instance du modèle de commande
+        $commandeModel = new App\Modele\CommandeModel($pdo);
+        
+        // Récupérer la commande
+        $commande = $commandeModel->getCommandeById($_POST['id_commande']);
+        
+        if (!$commande) {
+            throw new Exception("Commande introuvable");
+        }
+        
+        // Vérifier les permissions
+        $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+        if ($commande['id_utilisateur'] != $_SESSION['id_utilisateur'] && !$isAdmin) {
+            throw new Exception("Vous n'êtes pas autorisé à modifier cette commande");
+        }
+        
+        // Mettre à jour le statut
+        $result = $commandeModel->updateStatus($_POST['id_commande'], $_POST['statut']);
+        
+        if ($result) {
+            $_SESSION['success'] = "Le statut de la commande a été mis à jour avec succès";
+            
+            // Rediriger vers la page appropriée
+            if ($isAdmin) {
+                header('Location: /admin/commandes');
+            } else {
+                header('Location: /mon_profile');
+            }
+            exit();
+        } else {
+            throw new Exception("Erreur lors de la mise à jour du statut de la commande");
+        }
+        
+    } catch (Exception $e) {
+        $_SESSION['error'] = $e->getMessage();
+        $referer = $_SERVER['HTTP_REFERER'] ?? '/mon_profile';
+        header("Location: $referer");
+        exit();
+    }
+}
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 ini_set('log_errors', 1);
@@ -136,17 +204,19 @@ $router->map('GET', '/produits/supprimer=[i:id]', 'ProduitControlleur::supprimer
 // Routage pour l'action d'ajout de produit au panier
 $router->map('POST', '/produits/panier', 'HomeControlleur::ajouterProduit', 'ajouterProduitPanier');
 $router->map('POST', '/produits/supprimer/[i:id]', function($id) {
-    (new HomeControlleur())->gererPanier($id);
+    $_POST['id_produit'] = $id;
+    $_POST['action'] = 'supprimer';
+    (new HomeControlleur())->gererPanier();
 }, 'supprimerProduitPanier');
-
-$router->map('POST', '/panier/vider', function() {
+$router->map('POST', '/produits/supprimer', function() {
     (new HomeControlleur())->gererPanier();
 }, 'viderPanier');
 
 // Routes pour les commandes
 $router->map('GET', '/commandes', 'CommandeControlleur::index', 'commandes');
 $router->map('GET', '/commande/[i:id]', 'CommandeControlleur::afficherCommande', 'commande_detail');
-$router->map('POST', '/commande/ajouter', 'CommandeControlleur::ajouterCommande');
+$router->map('POST', '/commande', 'CommandeControlleur::ajouterCommande', 'creer_commande');
+$router->map('POST', '/commande/ajouter', 'CommandeControlleur::ajouterCommande', 'ajouter_commande');
 $router->map('POST', '/commande/[i:id_commande]/modifier/[a:action]', 'CommandeControlleur::modifierCommande', 'modifier_commande');
 $router->map('GET', '/admin/commandes/utilisateur/[i:user_id]', 'CommandeControlleur::adminCommandesUtilisateur', 'admin_commandes_utilisateur');
 $router->map('GET', '/utilisateur/[i:user_id]/commandes', 'CommandeControlleur::utilisateurCommandes', 'utilisateur_commandes');
@@ -170,12 +240,18 @@ $router->map('POST', '/admin/produits/delete/[i:id]', 'AdminProduitControlleur::
 
 // Routes pour le profil utilisateur
 $router->map('GET', '/mon_profile', 'ProfileControlleur::index', 'profile');
+$router->map('GET', '/profile', 'ProfileControlleur::index', 'profile2');
+
+// Routes pour la gestion des commandes admin
+$router->map('GET', '/admin/commandes', 'CommandeControlleur::index', 'admin_commandes');
+$router->map('POST', '/commande/annuler/[i:id]', 'CommandeControlleur::annulerCommande', 'annuler_commande');
 $router->map('GET', '/profile/edit', 'ProfileControlleur::editProfile', 'edit_profile');
 $router->map('POST', '/profile/edit', 'ProfileControlleur::updateProfile', 'update_profile');
 ///
 $router->map('GET, POST', '/profile/paiement/[i:id_commande]', 'ProfileControlleur::payOrder', 'paiement');
 $router->map('GET', '/profile/details/[i:id_commande]', 'ProfileControlleur::getOrderDetails', 'details');
 $router->map('GET', '/profile/annuler/[i:id_commande]', 'ProfileControlleur::changeOrderStatus', 'annuler');
+$router->map('POST', '/profile/update-password', 'ProfileControlleur::updatePassword', 'update_password');
 //utilisateurs
 
 // User routes - French and English versions
@@ -303,12 +379,12 @@ $router->map('GET', '/api/utilisateur/[i:id]/commandes', function($id) use ($pdo
 
 
 // Routes pour les promotions
-$router->map('GET', '/promotions', 'PromotionControlleur::index', 'promotions');
-$router->map('GET', '/promotion/[i:id]', 'PromotionControlleur::show', 'promotion_detail');
-$router->map('POST', '/promotion/add', 'PromotionControlleur::add', 'admin_ajouter_promotion');
-$router->map('GET', '/promotion/add', 'PromotionControlleur::addForm', 'admin_form_ajouter_promotion');
-$router->map('POST', '/promotion/delete/[i:id]', 'PromotionControlleur::delete', 'admin_supprimer_promotion');
-$router->map('POST', '/promotion/edit/[i:id]', 'PromotionControlleur::edit', 'admin_editer_promotion');
+$router->map('GET', '/admin/promotions', 'PromotionControlleur::index', 'admin_promotions');
+$router->map('GET', '/admin/promotion/[i:id]', 'PromotionControlleur::show', 'admin_promotion_detail');
+$router->map('POST', '/admin/promotion/add', 'PromotionControlleur::add', 'admin_ajouter_promotion');
+$router->map('GET', '/admin/promotion/add', 'PromotionControlleur::addForm', 'admin_form_ajouter_promotion');
+$router->map('POST', '/admin/promotion/delete/[i:id]', 'PromotionControlleur::delete', 'admin_supprimer_promotion');
+$router->map('POST', '/admin/promotion/edit/[i:id]', 'PromotionControlleur::edit', 'admin_editer_promotion');
 
 // Vérification des routes
 
@@ -395,8 +471,12 @@ try {
                             $controlleurInstance = new $controlleur($userModel);
                             break;
                     
+                        case "App\\Controlleur\\ProfileControlleur":
+                            $controlleurInstance = new $controlleur($pdo);
+                            break;
+                            
                         default:
-                            $controlleurInstance = new $controlleur(); 
+                            $controlleurInstance = new $controlleur();
                             break;
                     }
                     

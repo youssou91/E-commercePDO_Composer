@@ -1,0 +1,736 @@
+[2025-09-28 13:25:59] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:25:59] ID utilisateur reçu: 1
+[2025-09-28 13:25:59] Type de l'ID: integer
+[2025-09-28 13:25:59] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:25:59] Paramètres: Array
+(
+    [:id_utilisateur] => 1
+)
+
+[2025-09-28 13:25:59] Résultat de la requête: Array
+(
+    [id_utilisateur] => 1
+    [nom_utilisateur] => GNING
+    [prenom] => Youssou
+    [date_naissance] => 1995-03-24
+    [couriel] => youssougning@gmail.com
+    [mot_de_pass] => $2y$10$C40QnxxJPqBQwaisLqirjOKXwg.qLDQGeQsu87O/VyEC6fHbNg62O
+    [telephone] => 5147483630
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:25:59] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:25:59] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:25:59] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(534): App\Modele\UserModel->getUserInfo(1)
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->getUserInfo(1)
+#3 {main}
+[2025-09-28 13:25:59] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:26:03] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:26:03] ID utilisateur reçu: 6
+[2025-09-28 13:26:03] Type de l'ID: string
+[2025-09-28 13:26:03] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:26:03] Paramètres: Array
+(
+    [:id_utilisateur] => 6
+)
+
+[2025-09-28 13:26:03] Résultat de la requête: Array
+(
+    [id_utilisateur] => 6
+    [nom_utilisateur] => Test1
+    [prenom] => Test2
+    [date_naissance] => 2003-08-11
+    [couriel] => tester@gmail.com
+    [mot_de_pass] => $2y$10$rvy7q73YaVGkxVBw8mlftORL1r86pUIh/Mwq2/kT.t7lzxSoUAv4W
+    [telephone] => 5146019995
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:26:03] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:26:03] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:26:03] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(52): App\Modele\UserModel->getUserInfo('6')
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->view('6')
+#3 {main}
+[2025-09-28 13:26:03] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:28:01] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:28:01] ID utilisateur reçu: 1
+[2025-09-28 13:28:01] Type de l'ID: string
+[2025-09-28 13:28:01] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:28:01] Paramètres: Array
+(
+    [:id_utilisateur] => 1
+)
+
+[2025-09-28 13:28:01] Résultat de la requête: Array
+(
+    [id_utilisateur] => 1
+    [nom_utilisateur] => GNING
+    [prenom] => Youssou
+    [date_naissance] => 1995-03-24
+    [couriel] => youssougning@gmail.com
+    [mot_de_pass] => $2y$10$C40QnxxJPqBQwaisLqirjOKXwg.qLDQGeQsu87O/VyEC6fHbNg62O
+    [telephone] => 5147483630
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:28:01] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:28:01] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:28:01] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(52): App\Modele\UserModel->getUserInfo('1')
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->view('1')
+#3 {main}
+[2025-09-28 13:28:01] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:28:05] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:28:05] ID utilisateur reçu: 1
+[2025-09-28 13:28:05] Type de l'ID: integer
+[2025-09-28 13:28:05] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:28:05] Paramètres: Array
+(
+    [:id_utilisateur] => 1
+)
+
+[2025-09-28 13:28:05] Résultat de la requête: Array
+(
+    [id_utilisateur] => 1
+    [nom_utilisateur] => GNING
+    [prenom] => Youssou
+    [date_naissance] => 1995-03-24
+    [couriel] => youssougning@gmail.com
+    [mot_de_pass] => $2y$10$C40QnxxJPqBQwaisLqirjOKXwg.qLDQGeQsu87O/VyEC6fHbNg62O
+    [telephone] => 5147483630
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:28:05] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:28:05] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:28:05] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(534): App\Modele\UserModel->getUserInfo(1)
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->getUserInfo(1)
+#3 {main}
+[2025-09-28 13:28:05] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:28:09] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:28:09] ID utilisateur reçu: 1
+[2025-09-28 13:28:09] Type de l'ID: integer
+[2025-09-28 13:28:09] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:28:09] Paramètres: Array
+(
+    [:id_utilisateur] => 1
+)
+
+[2025-09-28 13:28:09] Résultat de la requête: Array
+(
+    [id_utilisateur] => 1
+    [nom_utilisateur] => GNING
+    [prenom] => Youssou
+    [date_naissance] => 1995-03-24
+    [couriel] => youssougning@gmail.com
+    [mot_de_pass] => $2y$10$C40QnxxJPqBQwaisLqirjOKXwg.qLDQGeQsu87O/VyEC6fHbNg62O
+    [telephone] => 5147483630
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:28:09] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:28:09] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:28:09] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(534): App\Modele\UserModel->getUserInfo(1)
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->getUserInfo(1)
+#3 {main}
+[2025-09-28 13:28:09] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:28:13] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:28:13] ID utilisateur reçu: 3
+[2025-09-28 13:28:13] Type de l'ID: string
+[2025-09-28 13:28:13] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:28:13] Paramètres: Array
+(
+    [:id_utilisateur] => 3
+)
+
+[2025-09-28 13:28:13] Résultat de la requête: Array
+(
+    [id_utilisateur] => 3
+    [nom_utilisateur] => GNING
+    [prenom] => Youssou
+    [date_naissance] => 2003-06-10
+    [couriel] => youssouqwerty@gmail.com
+    [mot_de_pass] => $2y$10$5oSs.kFMTQdih9J2ZLIMYuMbx5mEmfQiIFOUqlYceibZntOGbAe52
+    [telephone] => 5146019995
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:28:13] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:28:13] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:28:13] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(52): App\Modele\UserModel->getUserInfo('3')
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->view('3')
+#3 {main}
+[2025-09-28 13:28:13] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:29:40] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:29:40] ID utilisateur reçu: 1
+[2025-09-28 13:29:40] Type de l'ID: string
+[2025-09-28 13:29:40] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:29:40] Paramètres: Array
+(
+    [:id_utilisateur] => 1
+)
+
+[2025-09-28 13:29:40] Résultat de la requête: Array
+(
+    [id_utilisateur] => 1
+    [nom_utilisateur] => GNING
+    [prenom] => Youssou
+    [date_naissance] => 1995-03-24
+    [couriel] => youssougning@gmail.com
+    [mot_de_pass] => $2y$10$C40QnxxJPqBQwaisLqirjOKXwg.qLDQGeQsu87O/VyEC6fHbNg62O
+    [telephone] => 5147483630
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:29:40] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:29:40] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:29:40] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(52): App\Modele\UserModel->getUserInfo('1')
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->view('1')
+#3 {main}
+[2025-09-28 13:29:40] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:35:09] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:35:09] ID utilisateur reçu: 1
+[2025-09-28 13:35:09] Type de l'ID: string
+[2025-09-28 13:35:09] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:35:09] Paramètres: Array
+(
+    [:id_utilisateur] => 1
+)
+
+[2025-09-28 13:35:09] Résultat de la requête: Array
+(
+    [id_utilisateur] => 1
+    [nom_utilisateur] => GNING
+    [prenom] => Youssou
+    [date_naissance] => 1995-03-24
+    [couriel] => youssougning@gmail.com
+    [mot_de_pass] => $2y$10$C40QnxxJPqBQwaisLqirjOKXwg.qLDQGeQsu87O/VyEC6fHbNg62O
+    [telephone] => 5147483630
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:35:09] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:35:09] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:35:09] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(52): App\Modele\UserModel->getUserInfo('1')
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->view('1')
+#3 {main}
+[2025-09-28 13:35:09] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:35:12] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:35:12] ID utilisateur reçu: 2
+[2025-09-28 13:35:12] Type de l'ID: integer
+[2025-09-28 13:35:12] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:35:12] Paramètres: Array
+(
+    [:id_utilisateur] => 2
+)
+
+[2025-09-28 13:35:12] Résultat de la requête: Array
+(
+    [id_utilisateur] => 2
+    [nom_utilisateur] => TEST
+    [prenom] => TESLA
+    [date_naissance] => 2000-10-29
+    [couriel] => qwerty@gmail.com
+    [mot_de_pass] => $2y$10$ehE6rPNvAeeMpqmzFkekiOZMcDgzXodlhOvumX3oD0ZkOqkXf3Rzi
+    [telephone] => 5147483647
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:35:12] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:35:12] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:35:12] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(534): App\Modele\UserModel->getUserInfo(2)
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->getUserInfo(2)
+#3 {main}
+[2025-09-28 13:35:12] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:35:15] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:35:15] ID utilisateur reçu: 6
+[2025-09-28 13:35:15] Type de l'ID: integer
+[2025-09-28 13:35:15] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:35:16] Paramètres: Array
+(
+    [:id_utilisateur] => 6
+)
+
+[2025-09-28 13:35:16] Résultat de la requête: Array
+(
+    [id_utilisateur] => 6
+    [nom_utilisateur] => Test1
+    [prenom] => Test2
+    [date_naissance] => 2003-08-11
+    [couriel] => tester@gmail.com
+    [mot_de_pass] => $2y$10$rvy7q73YaVGkxVBw8mlftORL1r86pUIh/Mwq2/kT.t7lzxSoUAv4W
+    [telephone] => 5146019995
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:35:16] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:35:16] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:35:16] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(534): App\Modele\UserModel->getUserInfo(6)
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->getUserInfo(6)
+#3 {main}
+[2025-09-28 13:35:16] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:39:09] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:39:09] ID utilisateur reçu: 1
+[2025-09-28 13:39:09] Type de l'ID: string
+[2025-09-28 13:39:09] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:39:09] Paramètres: Array
+(
+    [:id_utilisateur] => 1
+)
+
+[2025-09-28 13:39:09] Résultat de la requête: Array
+(
+    [id_utilisateur] => 1
+    [nom_utilisateur] => GNING
+    [prenom] => Youssou
+    [date_naissance] => 1995-03-24
+    [couriel] => youssougning@gmail.com
+    [mot_de_pass] => $2y$10$C40QnxxJPqBQwaisLqirjOKXwg.qLDQGeQsu87O/VyEC6fHbNg62O
+    [telephone] => 5147483630
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:39:09] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:39:09] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:39:09] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(52): App\Modele\UserModel->getUserInfo('1')
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->view('1')
+#3 {main}
+[2025-09-28 13:39:09] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:39:13] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:39:13] ID utilisateur reçu: 2
+[2025-09-28 13:39:13] Type de l'ID: integer
+[2025-09-28 13:39:13] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:39:13] Paramètres: Array
+(
+    [:id_utilisateur] => 2
+)
+
+[2025-09-28 13:39:13] Résultat de la requête: Array
+(
+    [id_utilisateur] => 2
+    [nom_utilisateur] => TEST
+    [prenom] => TESLA
+    [date_naissance] => 2000-10-29
+    [couriel] => qwerty@gmail.com
+    [mot_de_pass] => $2y$10$ehE6rPNvAeeMpqmzFkekiOZMcDgzXodlhOvumX3oD0ZkOqkXf3Rzi
+    [telephone] => 5147483647
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:39:13] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:39:13] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:39:13] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(534): App\Modele\UserModel->getUserInfo(2)
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->getUserInfo(2)
+#3 {main}
+[2025-09-28 13:39:13] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:39:21] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:39:21] ID utilisateur reçu: 4
+[2025-09-28 13:39:21] Type de l'ID: string
+[2025-09-28 13:39:21] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:39:21] Paramètres: Array
+(
+    [:id_utilisateur] => 4
+)
+
+[2025-09-28 13:39:21] Résultat de la requête: Array
+(
+    [id_utilisateur] => 4
+    [nom_utilisateur] => test1
+    [prenom] => test2
+    [date_naissance] => 2001-07-15
+    [couriel] => test@gmail.com
+    [mot_de_pass] => $2y$10$EeVwQ8mL4RmRudmbLraWdOWGY8RPvT4K8utvyfrpy7hwaub0rBrRe
+    [telephone] => 5146019995
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:39:21] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:39:21] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:39:21] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(52): App\Modele\UserModel->getUserInfo('4')
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->view('4')
+#3 {main}
+[2025-09-28 13:39:21] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:39:24] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:39:24] ID utilisateur reçu: 1
+[2025-09-28 13:39:24] Type de l'ID: string
+[2025-09-28 13:39:24] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:39:24] Paramètres: Array
+(
+    [:id_utilisateur] => 1
+)
+
+[2025-09-28 13:39:24] Résultat de la requête: Array
+(
+    [id_utilisateur] => 1
+    [nom_utilisateur] => GNING
+    [prenom] => Youssou
+    [date_naissance] => 1995-03-24
+    [couriel] => youssougning@gmail.com
+    [mot_de_pass] => $2y$10$C40QnxxJPqBQwaisLqirjOKXwg.qLDQGeQsu87O/VyEC6fHbNg62O
+    [telephone] => 5147483630
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:39:24] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:39:24] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:39:24] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(52): App\Modele\UserModel->getUserInfo('1')
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->view('1')
+#3 {main}
+[2025-09-28 13:39:24] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:39:29] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:39:29] ID utilisateur reçu: 2
+[2025-09-28 13:39:29] Type de l'ID: integer
+[2025-09-28 13:39:29] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:39:29] Paramètres: Array
+(
+    [:id_utilisateur] => 2
+)
+
+[2025-09-28 13:39:29] Résultat de la requête: Array
+(
+    [id_utilisateur] => 2
+    [nom_utilisateur] => TEST
+    [prenom] => TESLA
+    [date_naissance] => 2000-10-29
+    [couriel] => qwerty@gmail.com
+    [mot_de_pass] => $2y$10$ehE6rPNvAeeMpqmzFkekiOZMcDgzXodlhOvumX3oD0ZkOqkXf3Rzi
+    [telephone] => 5147483647
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:39:29] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:39:29] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:39:29] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(534): App\Modele\UserModel->getUserInfo(2)
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->getUserInfo(2)
+#3 {main}
+[2025-09-28 13:39:29] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:39:58] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:39:58] ID utilisateur reçu: 6
+[2025-09-28 13:39:59] Type de l'ID: string
+[2025-09-28 13:39:59] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:39:59] Paramètres: Array
+(
+    [:id_utilisateur] => 6
+)
+
+[2025-09-28 13:39:59] Résultat de la requête: Array
+(
+    [id_utilisateur] => 6
+    [nom_utilisateur] => Test1
+    [prenom] => Test2
+    [date_naissance] => 2003-08-11
+    [couriel] => tester@gmail.com
+    [mot_de_pass] => $2y$10$rvy7q73YaVGkxVBw8mlftORL1r86pUIh/Mwq2/kT.t7lzxSoUAv4W
+    [telephone] => 5146019995
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:39:59] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:39:59] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:39:59] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(52): App\Modele\UserModel->getUserInfo('6')
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->view('6')
+#3 {main}
+[2025-09-28 13:39:59] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:41:29] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:41:29] ID utilisateur reçu: 1
+[2025-09-28 13:41:29] Type de l'ID: string
+[2025-09-28 13:41:29] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:41:29] Paramètres: Array
+(
+    [:id_utilisateur] => 1
+)
+
+[2025-09-28 13:41:29] Résultat de la requête: Array
+(
+    [id_utilisateur] => 1
+    [nom_utilisateur] => GNING
+    [prenom] => Youssou
+    [date_naissance] => 1995-03-24
+    [couriel] => youssougning@gmail.com
+    [mot_de_pass] => $2y$10$C40QnxxJPqBQwaisLqirjOKXwg.qLDQGeQsu87O/VyEC6fHbNg62O
+    [telephone] => 5147483630
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:41:29] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:41:29] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:41:29] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(52): App\Modele\UserModel->getUserInfo('1')
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->view('1')
+#3 {main}
+[2025-09-28 13:41:29] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:41:33] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:41:33] ID utilisateur reçu: 1
+[2025-09-28 13:41:33] Type de l'ID: integer
+[2025-09-28 13:41:33] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:41:33] Paramètres: Array
+(
+    [:id_utilisateur] => 1
+)
+
+[2025-09-28 13:41:33] Résultat de la requête: Array
+(
+    [id_utilisateur] => 1
+    [nom_utilisateur] => GNING
+    [prenom] => Youssou
+    [date_naissance] => 1995-03-24
+    [couriel] => youssougning@gmail.com
+    [mot_de_pass] => $2y$10$C40QnxxJPqBQwaisLqirjOKXwg.qLDQGeQsu87O/VyEC6fHbNg62O
+    [telephone] => 5147483630
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:41:33] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:41:33] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:41:33] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(534): App\Modele\UserModel->getUserInfo(1)
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->getUserInfo(1)
+#3 {main}
+[2025-09-28 13:41:33] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:43:19] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:43:19] ID utilisateur reçu: 4
+[2025-09-28 13:43:19] Type de l'ID: string
+[2025-09-28 13:43:19] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:43:19] Paramètres: Array
+(
+    [:id_utilisateur] => 4
+)
+
+[2025-09-28 13:43:19] Résultat de la requête: Array
+(
+    [id_utilisateur] => 4
+    [nom_utilisateur] => test1
+    [prenom] => test2
+    [date_naissance] => 2001-07-15
+    [couriel] => test@gmail.com
+    [mot_de_pass] => $2y$10$EeVwQ8mL4RmRudmbLraWdOWGY8RPvT4K8utvyfrpy7hwaub0rBrRe
+    [telephone] => 5146019995
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:43:19] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:43:19] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:43:19] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(52): App\Modele\UserModel->getUserInfo('4')
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->view('4')
+#3 {main}
+[2025-09-28 13:43:19] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:43:26] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:43:26] ID utilisateur reçu: 2
+[2025-09-28 13:43:26] Type de l'ID: integer
+[2025-09-28 13:43:26] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:43:26] Paramètres: Array
+(
+    [:id_utilisateur] => 2
+)
+
+[2025-09-28 13:43:26] Résultat de la requête: Array
+(
+    [id_utilisateur] => 2
+    [nom_utilisateur] => TEST
+    [prenom] => TESLA
+    [date_naissance] => 2000-10-29
+    [couriel] => qwerty@gmail.com
+    [mot_de_pass] => $2y$10$ehE6rPNvAeeMpqmzFkekiOZMcDgzXodlhOvumX3oD0ZkOqkXf3Rzi
+    [telephone] => 5147483647
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:43:26] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:43:26] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:43:26] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(534): App\Modele\UserModel->getUserInfo(2)
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->getUserInfo(2)
+#3 {main}
+[2025-09-28 13:43:26] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:45:08] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:45:08] ID utilisateur reçu: 1
+[2025-09-28 13:45:08] Type de l'ID: string
+[2025-09-28 13:45:08] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:45:08] Paramètres: Array
+(
+    [:id_utilisateur] => 1
+)
+
+[2025-09-28 13:45:08] Résultat de la requête: Array
+(
+    [id_utilisateur] => 1
+    [nom_utilisateur] => GNING
+    [prenom] => Youssou
+    [date_naissance] => 1995-03-24
+    [couriel] => youssougning@gmail.com
+    [mot_de_pass] => $2y$10$C40QnxxJPqBQwaisLqirjOKXwg.qLDQGeQsu87O/VyEC6fHbNg62O
+    [telephone] => 5147483630
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:45:08] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:45:08] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:45:08] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(52): App\Modele\UserModel->getUserInfo('1')
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->view('1')
+#3 {main}
+[2025-09-28 13:45:08] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:45:16] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:45:16] ID utilisateur reçu: 3
+[2025-09-28 13:45:16] Type de l'ID: integer
+[2025-09-28 13:45:16] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:45:16] Paramètres: Array
+(
+    [:id_utilisateur] => 3
+)
+
+[2025-09-28 13:45:16] Résultat de la requête: Array
+(
+    [id_utilisateur] => 3
+    [nom_utilisateur] => GNING
+    [prenom] => Youssou
+    [date_naissance] => 2003-06-10
+    [couriel] => youssouqwerty@gmail.com
+    [mot_de_pass] => $2y$10$5oSs.kFMTQdih9J2ZLIMYuMbx5mEmfQiIFOUqlYceibZntOGbAe52
+    [telephone] => 5146019995
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:45:16] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:45:16] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:45:16] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(534): App\Modele\UserModel->getUserInfo(3)
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->getUserInfo(3)
+#3 {main}
+[2025-09-28 13:45:16] === FIN DE UserModel->getUserInfo ===
+
+[2025-09-28 13:45:53] === DÉBUT DE UserModel->getUserInfo ===
+[2025-09-28 13:45:53] ID utilisateur reçu: 3
+[2025-09-28 13:45:53] Type de l'ID: integer
+[2025-09-28 13:45:53] Exécution de la requête SQL: SELECT u.* FROM utilisateur u WHERE u.id_utilisateur = :id_utilisateur
+[2025-09-28 13:45:53] Paramètres: Array
+(
+    [:id_utilisateur] => 3
+)
+
+[2025-09-28 13:45:53] Résultat de la requête: Array
+(
+    [id_utilisateur] => 3
+    [nom_utilisateur] => GNING
+    [prenom] => Youssou
+    [date_naissance] => 2003-06-10
+    [couriel] => youssouqwerty@gmail.com
+    [mot_de_pass] => $2y$10$5oSs.kFMTQdih9J2ZLIMYuMbx5mEmfQiIFOUqlYceibZntOGbAe52
+    [telephone] => 5146019995
+    [statut] => actif
+    [est_actif] => 1
+)
+
+[2025-09-28 13:45:53] Récupération des rôles avec la requête: SELECT role 
+                        FROM role_utilisateur 
+                        WHERE id_utilisateur = :id_utilisateur
+[2025-09-28 13:45:53] ERREUR PDO: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'role' in 'field list' dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php à la ligne 484
+[2025-09-28 13:45:53] Trace complète: #0 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Modele\UserModel.php(484): PDO->prepare('SELECT role \n  ...')
+#1 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php(534): App\Modele\UserModel->getUserInfo(3)
+#2 C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\public\index.php(283): app\Controlleur\UserControlleur->getUserInfo(3)
+#3 {main}
+[2025-09-28 13:45:53] === FIN DE UserModel->getUserInfo ===
+

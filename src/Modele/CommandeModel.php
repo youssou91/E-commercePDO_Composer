@@ -31,15 +31,30 @@ class CommandeModel {
         }
     }
     
-    public function updateCommande($id_commande, $statut) {
+    /**
+     * Met à jour le statut d'une commande
+     * 
+     * @param int $id_commande ID de la commande à mettre à jour
+     * @param string $statut Nouveau statut de la commande
+     * @return bool True si la mise à jour a réussi, false sinon
+     */
+    public function updateStatus($id_commande, $statut) {
         try {
             $stmt = $this->pdo->prepare("UPDATE commande SET statut = :statut WHERE id_commande = :id_commande");
             $stmt->bindParam(':id_commande', $id_commande, PDO::PARAM_INT);
             $stmt->bindParam(':statut', $statut);
             return $stmt->execute();
         } catch (PDOException $e) {
-            throw new PDOException("Erreur lors de la mise à jour de la commande avec ID $id_commande : " . $e->getMessage());
+            error_log("Erreur lors de la mise à jour du statut de la commande $id_commande : " . $e->getMessage());
+            return false;
         }
+    }
+    
+    /**
+     * @deprecated Utiliser updateStatus() à la place
+     */
+    public function updateCommande($id_commande, $statut) {
+        return $this->updateStatus($id_commande, $statut);
     }
     
     public function getCommandeById($id_commande) {
@@ -50,6 +65,34 @@ class CommandeModel {
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             throw new PDOException("Erreur lors de la récupération de la commande avec ID $id_commande : " . $e->getMessage());
+        }
+    }
+    
+    /**
+     * Compte le nombre de commandes d'un utilisateur avec filtrage optionnel par statut
+     * 
+     * @param int $user_id ID de l'utilisateur
+     * @param string|null $statut Filtre par statut (optionnel)
+     * @return int Nombre de commandes correspondant aux critères
+     */
+    public function countUserOrders($user_id, $statut = null) {
+        try {
+            $sql = "SELECT COUNT(*) as total FROM commande WHERE id_utilisateur = :user_id";
+            $params = [':user_id' => $user_id];
+            
+            if ($statut !== null) {
+                $sql .= " AND statut = :statut";
+                $params[':statut'] = $statut;
+            }
+            
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute($params);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            return (int)$result['total'];
+        } catch (PDOException $e) {
+            error_log("Erreur lors du comptage des commandes pour l'utilisateur $user_id : " . $e->getMessage());
+            return 0;
         }
     }
     
@@ -96,13 +139,20 @@ class CommandeModel {
     function addProduitCommande($id_commande, $produit) {
         $id_produit = $produit['id_produit'];
         $quantite = $produit['quantite'];
+        $prix_unitaire = $produit['prix_unitaire'] ?? 0; // Récupérer le prix unitaire
     
         try {
             // Vérifiez si le produit existe dans la table produits
-            $stmtCheckProduit = $this->pdo->prepare("SELECT id_produit FROM produits WHERE id_produit = :id_produit");
+            $stmtCheckProduit = $this->pdo->prepare("SELECT id_produit, prix_unitaire FROM produits WHERE id_produit = :id_produit");
             $stmtCheckProduit->execute([':id_produit' => $id_produit]);
+            $produitData = $stmtCheckProduit->fetch(PDO::FETCH_ASSOC);
     
-            if ($stmtCheckProduit->rowCount() > 0) {
+            if ($produitData) {
+                // Utiliser le prix unitaire du produit s'il n'est pas défini dans le panier
+                if (empty($prix_unitaire)) {
+                    $prix_unitaire = $produitData['prix_unitaire'];
+                }
+                
                 // Vérifier si le produit est déjà ajouté à cette commande
                 $stmtCheckProduitCommande = $this->pdo->prepare("SELECT * FROM produit_commande WHERE id_commande = :id_commande AND id_produit = :id_produit");
                 $stmtCheckProduitCommande->execute([
@@ -113,22 +163,24 @@ class CommandeModel {
                 if ($stmtCheckProduitCommande->rowCount() > 0) {
                     // Si le produit est déjà présent, mettez à jour la quantité
                     $stmtUpdateQuantite = $this->pdo->prepare(
-                        "UPDATE produit_commande SET quantite = quantite + :quantite WHERE id_commande = :id_commande AND id_produit = :id_produit"
+                        "UPDATE produit_commande SET quantite = quantite + :quantite, prix_unitaire = :prix_unitaire WHERE id_commande = :id_commande AND id_produit = :id_produit"
                     );
                     $stmtUpdateQuantite->execute([
                         ':quantite' => $quantite,
+                        ':prix_unitaire' => $prix_unitaire,
                         ':id_commande' => $id_commande,
                         ':id_produit' => $id_produit
                     ]);
                 } else {
                     // Insertion dans produit_commande si ce n'est pas déjà ajouté
                     $stmtProduitCommande = $this->pdo->prepare(
-                        "INSERT INTO produit_commande (id_commande, id_produit, quantite) VALUES (:id_commande, :id_produit, :quantite)"
+                        "INSERT INTO produit_commande (id_commande, id_produit, quantite, prix_unitaire) VALUES (:id_commande, :id_produit, :quantite, :prix_unitaire)"
                     );
                     $stmtProduitCommande->execute([
                         ':id_commande' => $id_commande,
                         ':id_produit' => $id_produit,
-                        ':quantite' => $quantite
+                        ':quantite' => $quantite,
+                        ':prix_unitaire' => $prix_unitaire
                     ]);
                 }
     
@@ -192,12 +244,15 @@ class CommandeModel {
     }
     
     /**
-     * Récupère toutes les commandes d'un utilisateur avec leur statut
+     * Récupère les commandes d'un utilisateur avec pagination et filtrage par statut
      * 
      * @param int $id_utilisateur L'ID de l'utilisateur
+     * @param int $offset Position de départ pour la pagination (défaut: 0)
+     * @param int $limit Nombre maximum de résultats à retourner (défaut: 5)
+     * @param string|null $statut Filtre par statut (optionnel)
      * @return array Les commandes de l'utilisateur
      */
-    public function getCommandesByUser($id_utilisateur) {
+    public function getCommandesByUser($id_utilisateur, $offset = 0, $limit = 5, $statut = null) {
         try {
             error_log("Début de getCommandesByUser pour l'utilisateur ID: $id_utilisateur");
             
@@ -207,32 +262,50 @@ class CommandeModel {
                 throw new PDOException("Pas de connexion à la base de données");
             }
             
-            // Préparer et exécuter la requête
+            // Construction de la requête de base
             $query = "
                 SELECT 
-                    id_commande,
-                    id_utilisateur,
-                    date_commande,
-                    prix_total,
-                    statut
-                FROM 
-                    commande
-                WHERE 
-                    id_utilisateur = :id_utilisateur
-                ORDER BY 
-                    date_commande DESC
-            ";
+                    c.id_commande,
+                    c.id_utilisateur,
+                    c.date_commande,
+                    c.prix_total,
+                    c.statut
+                FROM commande c
+                WHERE c.id_utilisateur = :id_utilisateur";
+            
+            // Ajout du filtre par statut si spécifié
+            if ($statut !== null) {
+                $query .= " AND c.statut = :statut";
+            }
+            
+            // Tri par date de commande décroissante
+            $query .= " ORDER BY c.date_commande DESC";
+            
+            // Ajout de la pagination
+            $query .= " LIMIT :offset, :limit";
             
             error_log("Requête SQL: " . $query);
             
+            // Préparation de la requête
             $stmt = $this->pdo->prepare($query);
-            $stmt->bindValue(':id_utilisateur', (int)$id_utilisateur, PDO::PARAM_INT);
             
+            // Liaison des paramètres
+            $stmt->bindValue(':id_utilisateur', $id_utilisateur, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+            $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+            
+            // Liaison du paramètre de statut si nécessaire
+            if ($statut !== null) {
+                $stmt->bindValue(':statut', $statut);
+            }
+            
+            // Exécution de la requête
             if (!$stmt->execute()) {
                 $errorInfo = $stmt->errorInfo();
                 throw new PDOException("Erreur d'exécution de la requête: " . ($errorInfo[2] ?? 'Inconnue'));
             }
             
+            // Récupération des résultats
             $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
             error_log("Nombre de commandes trouvées: " . count($result));
             

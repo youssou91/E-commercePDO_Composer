@@ -42,6 +42,7 @@ try {
         // Si on arrive ici, la connexion a réussi
         $_SESSION['id_utilisateur'] = $user['id_utilisateur'];
         $_SESSION['nom_utilisateur'] = $user['nom_utilisateur'];
+        $_SESSION['prenom'] = $user['prenom'];
         $_SESSION['role'] = $user['role'];
         $_SESSION['loggedin'] = true;
         

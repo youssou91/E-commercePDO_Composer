@@ -22,66 +22,36 @@ class CommandeControlleur {
             session_start();
         }
         
-        // Vérifier si l'utilisateur est connecté
-        if (!isset($_SESSION['id_utilisateur'])) {
-            $_SESSION['error'] = "Vous devez être connecté pour accéder à cette page";
+        // Vérifier si l'utilisateur est connecté et est admin
+        if (!isset($_SESSION['id_utilisateur']) || $_SESSION['role'] !== 'admin') {
             header('Location: /login');
             exit();
         }
         
-        // Gérer la mise à jour du statut si demandé
-        if (isset($_GET['action']) && $_GET['action'] === 'update_status' && isset($_GET['id_commande']) && isset($_GET['statut'])) {
-            try {
-                $id_commande = (int)$_GET['id_commande'];
-                $statut = $_GET['statut'];
-                
-                // Vérifier que l'utilisateur a le droit de modifier cette commande
-                $commande = $this->commandeModel->getCommandeById($id_commande);
-                $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
-                
-                if (!$commande || ($commande['id_utilisateur'] != $_SESSION['id_utilisateur'] && !$isAdmin)) {
-                    throw new \Exception("Vous n'êtes pas autorisé à modifier cette commande");
-                }
-                
-                // Mettre à jour le statut
-                $result = $this->commandeModel->updateStatus($id_commande, $statut);
-                
-                if ($result) {
-                    $_SESSION['success'] = "Le statut de la commande a été mis à jour avec succès";
-                } else {
-                    throw new \Exception("Erreur lors de la mise à jour du statut");
-                }
-                
-                // Rediriger vers la même page sans les paramètres
-                header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
-                exit();
-                
-            } catch (\Exception $e) {
-                $_SESSION['error'] = $e->getMessage();
-                header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
-                exit();
-            }
-        }
+        // Vérifier si on filtre par utilisateur
+        $userId = $_GET['user_id'] ?? null;
         
-        // Vérifier si l'utilisateur est un administrateur
-        $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
-        
-        try {
-            // Récupérer les commandes
-            if ($isAdmin) {
-                $commandes = $this->commandeModel->getAllCommandes();
-            } else {
-                $commandes = $this->commandeModel->getCommandesByUser($_SESSION['id_utilisateur']);
+        if ($userId) {
+            // Récupérer les informations de l'utilisateur
+            $userModel = new UserModel($this->pdo);
+            $userData = $userModel->getUserById($userId);
+            
+            if (!$userData) {
+                $_SESSION['error'] = "Utilisateur non trouvé";
+                header('Location: /admin/utilisateurs');
+                exit();
             }
             
-            // Afficher la vue des commandes
+            // Récupérer les commandes de l'utilisateur
+            $commandes = $this->commandeModel->getCommandesByUser($userId);
+            $userName = ($userData['prenom'] ?? '') . ' ' . ($userData['nom_utilisateur'] ?? '');
+            
+            // Afficher la vue des commandes avec le filtre utilisateur
+            require_once __DIR__ . '/../Vue/admin/commandes.php';
+        } else {
+            // Récupérer toutes les commandes
+            $commandes = $this->commandeModel->getAllCommandes();
             require_once __DIR__ . '/../Vue/Commandes.php';
-            
-        } catch (\Exception $e) {
-            error_log("Erreur dans CommandeControlleur::index: " . $e->getMessage());
-            $_SESSION['error'] = "Une erreur est survenue lors de la récupération des commandes";
-            header('Location: /');
-            exit();
         }
     }
     
@@ -90,88 +60,9 @@ class CommandeControlleur {
      * 
      * @param int $user_id L'ID de l'utilisateur
      */
-    /**
-     * Annule une commande
-     * 
-     * @param int $id_commande ID de la commande à annuler
-     */
-    public function annulerCommande($id_commande) {
-        // Démarrer la session si elle n'est pas déjà démarrée
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        
-        // Vérifier si l'utilisateur est connecté
-        if (!isset($_SESSION['id_utilisateur'])) {
-            $_SESSION['error'] = "Vous devez être connecté pour effectuer cette action";
-            header('Location: /login');
-            exit();
-        }
-        
-        // Déterminer si l'utilisateur est admin
-        $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
-        
-        // Utiliser le referer pour déterminer la page de redirection
-        $referer = $_SERVER['HTTP_REFERER'] ?? null;
-        
-        // Définir l'URL de redirection par défaut
-        $redirectUrl = $isAdmin ? '/admin/commandes' : '/mon_profile';
-        
-        // Si on a un referer, on vérifie s'il contient une des pages connues
-        if ($referer) {
-            if (strpos($referer, '/admin/commandes') !== false) {
-                $redirectUrl = '/admin/commandes';
-            } elseif (strpos($referer, '/mon_profile') !== false) {
-                $redirectUrl = '/mon_profile';
-            }
-        }
-        
-        try {
-            // Récupérer la commande
-            $commande = $this->commandeModel->getCommandeById($id_commande);
-            
-            // Vérifier si la commande existe
-            if (!$commande) {
-                throw new \Exception("Commande introuvable");
-            }
-            
-            // Vérifier les permissions (l'utilisateur doit être le propriétaire ou un admin)
-            $isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
-            if ($commande['id_utilisateur'] != $_SESSION['id_utilisateur'] && !$isAdmin) {
-                throw new \Exception("Vous n'êtes pas autorisé à annuler cette commande");
-            }
-            
-            // Vérifier si la commande peut être annulée (seulement si elle est en attente ou en traitement)
-            if (!in_array($commande['statut'], ['En attente', 'En traitement'])) {
-                throw new \Exception("Cette commande ne peut plus être annulée car son statut est : " . $commande['statut']);
-            }
-            
-            // Mettre à jour le statut de la commande
-            $result = $this->commandeModel->updateStatus($id_commande, 'Annulée');
-            
-            if ($result) {
-                $_SESSION['success'] = "La commande a été annulée avec succès";
-            } else {
-                throw new \Exception("Une erreur est survenue lors de l'annulation de la commande");
-            }
-            
-        } catch (\Exception $e) {
-            $_SESSION['error'] = $e->getMessage();
-        }
-        
-        // Rediriger vers la page appropriée
-        header("Location: $redirectUrl");
-        exit();
-    }
-    
     public function adminCommandesUtilisateur($user_id) {
         // Vérifier si l'utilisateur est connecté et est admin
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-        
         if (!isset($_SESSION['id_utilisateur']) || $_SESSION['role'] !== 'admin') {
-            $_SESSION['error'] = "Accès refusé";
             header('Location: /login');
             exit();
         }
@@ -179,26 +70,33 @@ class CommandeControlleur {
         try {
             // Récupérer les informations de l'utilisateur
             $userModel = new UserModel($this->pdo);
-            $user = $userModel->getUserById($user_id);
+            $userData = $userModel->getUserById($user_id);
             
-            if (!$user) {
+            if (!$userData) {
                 throw new \Exception("Utilisateur non trouvé");
             }
             
             // Récupérer les commandes de l'utilisateur
             $commandes = $this->commandeModel->getCommandesByUser($user_id);
             
-            // Afficher la vue d'administration des commandes
+            // Afficher la vue
             require_once __DIR__ . '/../Vue/admin/commandes.php';
             
         } catch (\Exception $e) {
-            error_log("Erreur dans CommandeControlleur::adminCommandesUtilisateur: " . $e->getMessage());
-            $_SESSION['error'] = $e->getMessage();
-            header('Location: /admin/utilisateurs');
+            // Gérer l'erreur
+            error_log("Erreur dans adminCommandesUtilisateur: " . $e->getMessage());
+            $_SESSION['error'] = "Une erreur est survenue lors de la récupération des commandes.";
+            header('Location: /admin');
             exit();
         }
     }
     
+    // Méthode pour lister les commandes
+    public function listCommandes() {
+        return $this->commandeModel->getAllCommandes();
+    }
+    
+    // Afficher une commande spécifique
     /**
      * Modifie le statut d'une commande
      * 
@@ -377,3 +275,4 @@ class CommandeControlleur {
         }
     }
 }
+?>

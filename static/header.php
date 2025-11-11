@@ -2,6 +2,9 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+// Debug: Afficher le contenu de la session
+error_log('Session data: ' . print_r($_SESSION, true));
 ?>
 
 <!DOCTYPE html>
@@ -11,6 +14,9 @@ if (session_status() === PHP_SESSION_NONE) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>One-Shop</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
 </head>
 <body class="bg-gray-100 text-gray-800">
     <header class="bg-white shadow-md">
@@ -35,18 +41,24 @@ if (session_status() === PHP_SESSION_NONE) {
                 <a href="<?= $router ? $router->generate('contacter') : '/contact' ?>" class="text-gray-700 hover:text-blue-600">Contact</a>
 
                 <!-- Menu Admin -->
-                <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+                <?php 
+                // Debug: Afficher le rôle de l'utilisateur
+                error_log('Rôle dans la session: ' . ($_SESSION['role'] ?? 'non défini'));
+                ?>
+                <?php if (isset($_SESSION['role']) && strtolower($_SESSION['role']) === 'admin'): ?>
                     <a href="<?= $router ? $router->generate('produits') : '/produits' ?>" class="text-gray-700 hover:text-blue-600">Produits</a>
                     <a href="<?= $router ? $router->generate('utilisateurs') : '/utilisateurs' ?>" class="text-gray-700 hover:text-blue-600">Utilisateurs</a>
-                    <a href="<?= $router ? $router->generate('commandes') : '/commandes' ?>" class="text-gray-700 hover:text-blue-600">Commandes</a>
-                    <a href="<?= $router ? $router->generate('promotions') : '/promotions' ?>" class="text-gray-700 hover:text-blue-600">Promotions</a>
+                    <a href="<?= $router ? $router->generate('admin_commandes') : '/admin/commandes' ?>" class="text-gray-700 hover:text-blue-600">Commandes</a>
+                    <a href="<?= $router ? $router->generate('admin_promotions') : '/admin/promotions' ?>" class="text-gray-700 hover:text-blue-600">Promotions</a>
                 <?php endif; ?>
             </nav>
 
             <!-- User Links -->
             <div class="hidden md:flex space-x-4">
                 <?php if (isset($_SESSION['id_utilisateur'])): ?>
-                    <a href="<?= $router ? $router->generate('profile') : '/profile' ?>" class="text-gray-700 hover:text-blue-600">Mon Profil</a>
+                    <a href="<?= $router ? $router->generate('profile') : '/profile' ?>" class="text-gray-700 hover:text-blue-600 font-bold">
+                        <?= htmlspecialchars(($_SESSION['prenom'] ?? 'Mon Profil') . (isset($_SESSION['role']) ? ' (' . htmlspecialchars($_SESSION['role']) . ')' : '')) ?>
+                    </a>
                     <a href="<?= $router ? $router->generate('deconnexion') : '/logout' ?>" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Déconnexion</a>
                 <?php else: ?>
                     <a href="<?= $router ? $router->generate('connexion') : '/login' ?>" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Connexion</a>

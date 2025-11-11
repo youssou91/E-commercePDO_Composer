@@ -33,6 +33,30 @@ class ProduitControlleur {
         require __DIR__ . '/../vue/ajout.php';
     }
 
+    /**
+     * Affiche les détails d'un produit spécifique
+     * 
+     * @param int $id L'ID du produit à afficher
+     */
+    public function show($id) {
+        try {
+            $produit = $this->produitModel->getProduitById($id);
+            if (!$produit) {
+                throw new \Exception("Produit non trouvé");
+            }
+            
+            // Récupérer la catégorie du produit
+            $categorie = $this->categorieModel->getCategorieById($produit['id_categorie']);
+            
+            // Afficher la vue des détails du produit
+            require __DIR__ . '/../vue/detail_produit.php';
+        } catch (\Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+            header('Location: /produits');
+            exit();
+        }
+    }
+
     public function ajouterProduit(array $data) {
         // Créez l'objet produit à partir des données
         $produit = new Produits(

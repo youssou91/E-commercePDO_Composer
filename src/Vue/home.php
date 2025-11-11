@@ -53,11 +53,7 @@
                                 <td class="border px-4 py-2"><?= number_format($prixUnitaireProduit, 2) ?> $</td>
                                 <td class="border px-4 py-2"><?= number_format($prixTotalProduit, 2) ?> $</td>
                                 <td class="border px-4 py-2">
-                                    <!-- <form method="POST"  action="/produits/panier"> -->
-                                    <form method="POST"  action="/produits/supprimer/<?= $id ?>" >
-
-                                        <input type="hidden" name="id_produit" value="<?= $id ?>">
-                                        <input type="hidden" name="action" value="supprimer">
+                                    <form method="POST" action="/produits/supprimer/<?= $id ?>">
                                         <button type="submit" class="text-red-500 hover:text-red-700">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
@@ -242,6 +238,55 @@
                     <?php endif;
                 ?>
             </div>
+
+            <?php if (isset($pagination) && $pagination['totalPages'] > 1): ?>
+            <div class="flex justify-center mt-8 mb-8">
+                <nav class="flex items-center space-x-1">
+                    <!-- Bouton Précédent -->
+                    <?php if ($pagination['page'] > 1): ?>
+                        <a href="?page=<?= $pagination['page'] - 1 ?>" class="px-3 py-1 rounded-md bg-blue-100 text-blue-700 hover:bg-blue-200">
+                            &laquo; Précédent
+                        </a>
+                    <?php else: ?>
+                        <span class="px-3 py-1 text-gray-400">&laquo; Précédent</span>
+                    <?php endif; ?>
+
+                    <!-- Numéros de page -->
+                    <?php 
+                    $startPage = max(1, $pagination['page'] - 2);
+                    $endPage = min($pagination['totalPages'], $pagination['page'] + 2);
+                    
+                    // Afficher le premier numéro de page si nécessaire
+                    if ($startPage > 1): ?>
+                        <a href="?page=1" class="px-3 py-1 rounded-md hover:bg-gray-200">1</a>
+                        <?php if ($startPage > 2) echo '<span class="px-1">...</span>'; ?>
+                    <?php endif; ?>
+
+                    <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
+                        <?php if ($i == $pagination['page']): ?>
+                            <span class="px-3 py-1 rounded-md bg-blue-500 text-white"><?= $i ?></span>
+                        <?php else: ?>
+                            <a href="?page=<?= $i ?>" class="px-3 py-1 rounded-md hover:bg-gray-200"><?= $i ?></a>
+                        <?php endif; ?>
+                    <?php endfor; ?>
+
+                    <!-- Afficher le dernier numéro de page si nécessaire -->
+                    <?php if ($endPage < $pagination['totalPages']): ?>
+                        <?php if ($endPage < $pagination['totalPages'] - 1) echo '<span class="px-1">...</span>'; ?>
+                        <a href="?page=<?= $pagination['totalPages'] ?>" class="px-3 py-1 rounded-md hover:bg-gray-200"><?= $pagination['totalPages'] ?></a>
+                    <?php endif; ?>
+
+                    <!-- Bouton Suivant -->
+                    <?php if ($pagination['page'] < $pagination['totalPages']): ?>
+                        <a href="?page=<?= $pagination['page'] + 1 ?>" class="px-3 py-1 rounded-md bg-blue-100 text-blue-700 hover:bg-blue-200">
+                            Suivant &raquo;
+                        </a>
+                    <?php else: ?>
+                        <span class="px-3 py-1 text-gray-400">Suivant &raquo;</span>
+                    <?php endif; ?>
+                </nav>
+            </div>
+            <?php endif; ?>
         </div> 
     </body>
     <script>

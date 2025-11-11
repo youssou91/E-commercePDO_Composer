@@ -1,0 +1,130 @@
+[2025-09-28 13:24:12] === DÉBUT DE getUserInfo ===
+[2025-09-28 13:24:12] Paramètre reçu: 1
+[2025-09-28 13:24:12] Type du paramètre: string
+[2025-09-28 13:24:12] Valeur brute du paramètre: 1
+[2025-09-28 13:24:12] ID après conversion en entier: 1
+[2025-09-28 13:24:12] Type après conversion: integer
+[2025-09-28 13:24:12] Appel à userModel->getUserInfo avec ID: 1
+[2025-09-28 13:24:12] Résultat de userModel->getUserInfo: 
+[2025-09-28 13:24:12] Type du résultat: boolean
+[2025-09-28 13:24:12] Aucun utilisateur trouvé avec l'ID: 1
+[2025-09-28 13:24:12] ERREUR: Utilisateur non trouvé dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php à la ligne 540
+[2025-09-28 13:25:59] === DÉBUT DE getUserInfo ===
+[2025-09-28 13:25:59] Paramètre reçu: 1
+[2025-09-28 13:25:59] Type du paramètre: string
+[2025-09-28 13:25:59] Valeur brute du paramètre: 1
+[2025-09-28 13:25:59] ID après conversion en entier: 1
+[2025-09-28 13:25:59] Type après conversion: integer
+[2025-09-28 13:25:59] Appel à userModel->getUserInfo avec ID: 1
+[2025-09-28 13:25:59] Résultat de userModel->getUserInfo: 
+[2025-09-28 13:25:59] Type du résultat: boolean
+[2025-09-28 13:25:59] Aucun utilisateur trouvé avec l'ID: 1
+[2025-09-28 13:25:59] ERREUR: Utilisateur non trouvé dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php à la ligne 540
+[2025-09-28 13:28:05] === DÉBUT DE getUserInfo ===
+[2025-09-28 13:28:05] Paramètre reçu: 1
+[2025-09-28 13:28:05] Type du paramètre: string
+[2025-09-28 13:28:05] Valeur brute du paramètre: 1
+[2025-09-28 13:28:05] ID après conversion en entier: 1
+[2025-09-28 13:28:05] Type après conversion: integer
+[2025-09-28 13:28:05] Appel à userModel->getUserInfo avec ID: 1
+[2025-09-28 13:28:05] Résultat de userModel->getUserInfo: 
+[2025-09-28 13:28:05] Type du résultat: boolean
+[2025-09-28 13:28:05] Aucun utilisateur trouvé avec l'ID: 1
+[2025-09-28 13:28:05] ERREUR: Utilisateur non trouvé dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php à la ligne 540
+[2025-09-28 13:28:09] === DÉBUT DE getUserInfo ===
+[2025-09-28 13:28:09] Paramètre reçu: 1
+[2025-09-28 13:28:09] Type du paramètre: string
+[2025-09-28 13:28:09] Valeur brute du paramètre: 1
+[2025-09-28 13:28:09] ID après conversion en entier: 1
+[2025-09-28 13:28:09] Type après conversion: integer
+[2025-09-28 13:28:09] Appel à userModel->getUserInfo avec ID: 1
+[2025-09-28 13:28:09] Résultat de userModel->getUserInfo: 
+[2025-09-28 13:28:09] Type du résultat: boolean
+[2025-09-28 13:28:09] Aucun utilisateur trouvé avec l'ID: 1
+[2025-09-28 13:28:09] ERREUR: Utilisateur non trouvé dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php à la ligne 540
+[2025-09-28 13:35:12] === DÉBUT DE getUserInfo ===
+[2025-09-28 13:35:12] Paramètre reçu: 2
+[2025-09-28 13:35:12] Type du paramètre: string
+[2025-09-28 13:35:12] Valeur brute du paramètre: 2
+[2025-09-28 13:35:12] ID après conversion en entier: 2
+[2025-09-28 13:35:12] Type après conversion: integer
+[2025-09-28 13:35:12] Appel à userModel->getUserInfo avec ID: 2
+[2025-09-28 13:35:12] Résultat de userModel->getUserInfo: 
+[2025-09-28 13:35:12] Type du résultat: boolean
+[2025-09-28 13:35:12] Aucun utilisateur trouvé avec l'ID: 2
+[2025-09-28 13:35:12] ERREUR: Utilisateur non trouvé dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php à la ligne 540
+[2025-09-28 13:35:15] === DÉBUT DE getUserInfo ===
+[2025-09-28 13:35:15] Paramètre reçu: 6
+[2025-09-28 13:35:15] Type du paramètre: string
+[2025-09-28 13:35:15] Valeur brute du paramètre: 6
+[2025-09-28 13:35:15] ID après conversion en entier: 6
+[2025-09-28 13:35:15] Type après conversion: integer
+[2025-09-28 13:35:15] Appel à userModel->getUserInfo avec ID: 6
+[2025-09-28 13:35:16] Résultat de userModel->getUserInfo: 
+[2025-09-28 13:35:16] Type du résultat: boolean
+[2025-09-28 13:35:16] Aucun utilisateur trouvé avec l'ID: 6
+[2025-09-28 13:35:16] ERREUR: Utilisateur non trouvé dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php à la ligne 540
+[2025-09-28 13:39:13] === DÉBUT DE getUserInfo ===
+[2025-09-28 13:39:13] Paramètre reçu: 2
+[2025-09-28 13:39:13] Type du paramètre: string
+[2025-09-28 13:39:13] Valeur brute du paramètre: 2
+[2025-09-28 13:39:13] ID après conversion en entier: 2
+[2025-09-28 13:39:13] Type après conversion: integer
+[2025-09-28 13:39:13] Appel à userModel->getUserInfo avec ID: 2
+[2025-09-28 13:39:13] Résultat de userModel->getUserInfo: 
+[2025-09-28 13:39:13] Type du résultat: boolean
+[2025-09-28 13:39:13] Aucun utilisateur trouvé avec l'ID: 2
+[2025-09-28 13:39:13] ERREUR: Utilisateur non trouvé dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php à la ligne 540
+[2025-09-28 13:39:29] === DÉBUT DE getUserInfo ===
+[2025-09-28 13:39:29] Paramètre reçu: 2
+[2025-09-28 13:39:29] Type du paramètre: string
+[2025-09-28 13:39:29] Valeur brute du paramètre: 2
+[2025-09-28 13:39:29] ID après conversion en entier: 2
+[2025-09-28 13:39:29] Type après conversion: integer
+[2025-09-28 13:39:29] Appel à userModel->getUserInfo avec ID: 2
+[2025-09-28 13:39:29] Résultat de userModel->getUserInfo: 
+[2025-09-28 13:39:29] Type du résultat: boolean
+[2025-09-28 13:39:29] Aucun utilisateur trouvé avec l'ID: 2
+[2025-09-28 13:39:29] ERREUR: Utilisateur non trouvé dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php à la ligne 540
+[2025-09-28 13:41:33] === DÉBUT DE getUserInfo ===
+[2025-09-28 13:41:33] Paramètre reçu: 1
+[2025-09-28 13:41:33] Type du paramètre: string
+[2025-09-28 13:41:33] Valeur brute du paramètre: 1
+[2025-09-28 13:41:33] ID après conversion en entier: 1
+[2025-09-28 13:41:33] Type après conversion: integer
+[2025-09-28 13:41:33] Appel à userModel->getUserInfo avec ID: 1
+[2025-09-28 13:41:33] Résultat de userModel->getUserInfo: 
+[2025-09-28 13:41:33] Type du résultat: boolean
+[2025-09-28 13:41:33] Aucun utilisateur trouvé avec l'ID: 1
+[2025-09-28 13:41:33] ERREUR: Utilisateur non trouvé dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php à la ligne 540
+[2025-09-28 13:43:26] === DÉBUT DE getUserInfo ===
+[2025-09-28 13:43:26] Paramètre reçu: 2
+[2025-09-28 13:43:26] Type du paramètre: string
+[2025-09-28 13:43:26] Valeur brute du paramètre: 2
+[2025-09-28 13:43:26] ID après conversion en entier: 2
+[2025-09-28 13:43:26] Type après conversion: integer
+[2025-09-28 13:43:26] Appel à userModel->getUserInfo avec ID: 2
+[2025-09-28 13:43:26] Résultat de userModel->getUserInfo: 
+[2025-09-28 13:43:26] Type du résultat: boolean
+[2025-09-28 13:43:26] Aucun utilisateur trouvé avec l'ID: 2
+[2025-09-28 13:43:26] ERREUR: Utilisateur non trouvé dans C:\xampp\htdocs\dashboard\PHP2\MVC_Composer\MVC_Composer\MVC_Composer\src\Controlleur\UserControlleur.php à la ligne 540
+[2025-09-28 13:45:16] === DÉBUT DE getUserInfo ===
+[2025-09-28 13:45:16] Paramètre reçu: 3
+[2025-09-28 13:45:16] Type du paramètre: string
+[2025-09-28 13:45:16] Valeur brute du paramètre: 3
+[2025-09-28 13:45:16] ID après conversion en entier: 3
+[2025-09-28 13:45:16] Type après conversion: integer
+[2025-09-28 13:45:16] Appel à userModel->getUserInfo avec ID: 3
+[2025-09-28 13:45:16] Résultat de userModel->getUserInfo: 
+[2025-09-28 13:45:16] Type du résultat: boolean
+[2025-09-28 13:45:16] Aucun utilisateur trouvé avec l'ID: 3
+[2025-09-28 13:45:53] === DÉBUT DE getUserInfo ===
+[2025-09-28 13:45:53] Paramètre reçu: 3
+[2025-09-28 13:45:53] Type du paramètre: string
+[2025-09-28 13:45:53] Valeur brute du paramètre: 3
+[2025-09-28 13:45:53] ID après conversion en entier: 3
+[2025-09-28 13:45:53] Type après conversion: integer
+[2025-09-28 13:45:53] Appel à userModel->getUserInfo avec ID: 3
+[2025-09-28 13:45:53] Résultat de userModel->getUserInfo: 
+[2025-09-28 13:45:53] Type du résultat: boolean
+[2025-09-28 13:45:53] Aucun utilisateur trouvé avec l'ID: 3
