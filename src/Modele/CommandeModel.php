@@ -69,6 +69,27 @@ class CommandeModel {
     }
     
     /**
+     * Récupère les produits d'une commande spécifique
+     * @param int $id_commande ID de la commande
+     * @return array Tableau des produits de la commande
+     */
+    public function getProduitsCommande($id_commande) {
+        try {
+            $stmt = $this->pdo->prepare(
+                "SELECT p.*, pc.quantite, pc.prix_unitaire as prix_vente 
+                 FROM produit_commande pc 
+                 JOIN produits p ON pc.id_produit = p.id_produit 
+                 WHERE pc.id_commande = :id_commande"
+            );
+            $stmt->bindParam(':id_commande', $id_commande, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            throw new PDOException("Erreur lors de la récupération des produits de la commande $id_commande : " . $e->getMessage());
+        }
+    }
+    
+    /**
      * Compte le nombre de commandes d'un utilisateur avec filtrage optionnel par statut
      * 
      * @param int $user_id ID de l'utilisateur

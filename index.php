@@ -126,6 +126,7 @@ $router->map('GET|POST', '/commande/editer/id_commande=[i:id_commande]/action=[a
 $router->map('POST', '/cart/ajouter', 'CartControlleur::ajouter');
 $router->map('GET', '/cart', 'CartControlleur::afficher');
 $router->map('POST', '/cart/vider', 'CartControlleur::vider');
+$router->map('POST', '/panier/mettre-a-jour', 'CartControlleur::mettreAJourQuantite', 'panier_mettre_a_jour');
 
 // Routes d'authentification
 $router->map('GET|POST', '/login', 'AuthControlleur::loginForm', 'connexion');

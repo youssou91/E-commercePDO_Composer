@@ -225,6 +225,7 @@ $router->map('GET', '/utilisateur/[i:user_id]/commandes', 'CommandeControlleur::
 $router->map('POST', '/cart/ajouter', 'CartControlleur::ajouter');
 $router->map('GET', '/cart', 'CartControlleur::afficher');
 $router->map('POST', '/cart/vider', 'CartControlleur::vider');
+$router->map('POST', '/panier/mettre-a-jour', 'CartControlleur::mettreAJourQuantite', 'panier_mettre_a_jour');
 
 // Routes d'authentification
 $router->map('GET|POST', '/login', 'AuthControlleur::loginForm', 'connexion');
@@ -247,8 +248,22 @@ $router->map('GET', '/admin/commandes', 'CommandeControlleur::index', 'admin_com
 $router->map('POST', '/commande/annuler/[i:id]', 'CommandeControlleur::annulerCommande', 'annuler_commande');
 $router->map('GET', '/profile/edit', 'ProfileControlleur::editProfile', 'edit_profile');
 $router->map('POST', '/profile/edit', 'ProfileControlleur::updateProfile', 'update_profile');
-///
-$router->map('GET, POST', '/profile/paiement/[i:id_commande]', 'ProfileControlleur::payOrder', 'paiement');
+// Initialisation du contrôleur de profil
+require_once __DIR__ . '/../src/Controlleur/ProfileControlleur.php';
+$profileController = new App\Controlleur\ProfileControlleur($pdo);
+
+// Route pour le paiement (modal ou page complète)
+$router->map('GET, POST', '/profile/paiement/[i:id_commande]', function($id_commande) use ($pdo) {
+    // Initialiser le contrôleur avec la connexion PDO
+    $profileController = new App\Controlleur\ProfileControlleur($pdo);
+    
+    // Vérifier si c'est une requête AJAX (modal)
+    $isAjax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+              strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
+    
+    // Appeler la méthode payOrder avec le paramètre modal
+    $profileController->payOrder($id_commande, $isAjax);
+}, 'paiement');
 $router->map('GET', '/profile/details/[i:id_commande]', 'ProfileControlleur::getOrderDetails', 'details');
 $router->map('GET', '/profile/annuler/[i:id_commande]', 'ProfileControlleur::changeOrderStatus', 'annuler');
 $router->map('POST', '/profile/update-password', 'ProfileControlleur::updatePassword', 'update_password');
@@ -406,10 +421,28 @@ $GLOBALS['router'] = $router;
 
 try {
     if ($match) {
-        // Inclure le header maintenant que le routeur est disponible globalement
-        require '../static/header.php';
+        // Par défaut, on affiche le header et le footer
+        $noHeaderFooter = false;
+        
+        // Inclure le header avant d'exécuter le contrôleur
+        if (!(isset($GLOBALS['noHeaderFooter']) && $GLOBALS['noHeaderFooter'] === true)) {
+            require '../static/header.php';
+        }
+        
         if (is_callable($match['target'])) {
-            call_user_func_array($match['target'], $match['params']);
+            ob_start();
+            $result = call_user_func_array($match['target'], $match['params']);
+            $output = ob_get_clean();
+            
+            // Si c'est une requête AJAX ou si $noHeaderFooter est vrai, on n'affiche que le contenu
+            if ((isset($GLOBALS['noHeaderFooter']) && $GLOBALS['noHeaderFooter'] === true) || 
+                (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest')) {
+                echo $output;
+                exit();
+            }
+            
+            // Sinon, on affiche le contenu normalement (le header est déjà inclus)
+            echo $output;
         } else {
             list($controlleur, $method) = explode('::', $match['target']);
             $controlleurClass = "../src/controlleur/{$controlleur}.php";
@@ -516,7 +549,12 @@ try {
                 throw new Exception("Fichier du contrôleur introuvable : $controlleurClass");
             }
         }
-        require '../static/footer.php';
+        
+        // Inclure le footer sauf si $noHeaderFooter est vrai ou si c'est une requête AJAX
+        if (!(isset($GLOBALS['noHeaderFooter']) && $GLOBALS['noHeaderFooter'] === true) && 
+            (empty($_SERVER['HTTP_X_REQUESTED_WITH']) || strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) != 'xmlhttprequest')) {
+            require '../static/footer.php';
+        }
     } else {
         throw new Exception("Aucune route correspondante trouvée pour " . $_SERVER['REQUEST_URI']);
     }

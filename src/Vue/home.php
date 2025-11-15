@@ -47,13 +47,21 @@
                                         $totalPanier += $prixTotalProduit;
                                         $quantiteTotale += $quantite;
                             ?>
-                            <tr>
-                                <td class="border px-4 py-2"><?= htmlspecialchars($produit['nom']) ?></td>
-                                <td class="border px-4 py-2"><?= $quantite ?></td>
-                                <td class="border px-4 py-2"><?= number_format($prixUnitaireProduit, 2) ?> $</td>
-                                <td class="border px-4 py-2"><?= number_format($prixTotalProduit, 2) ?> $</td>
+                            <tr class="product-row" data-product-id="<?= $id ?>" data-unit-price="<?= $prixUnitaireProduit ?>">
+                                <td class="border px-4 py-2"><?= htmlspecialchars($produit['nom'] ?? 'Produit inconnu') ?></td>
                                 <td class="border px-4 py-2">
-                                    <form method="POST" action="/produits/supprimer/<?= $id ?>">
+                                    <input type="number" 
+                                           name="quantite" 
+                                           class="quantity-input w-20 text-center border rounded" 
+                                           value="<?= $quantite ?>" 
+                                           min="1" 
+                                           max="100"
+                                           data-product-id="<?= $id ?>">
+                                </td>
+                                <td class="border px-4 py-2 unit-price"><?= number_format($prixUnitaireProduit, 2) ?> $</td>
+                                <td class="border px-4 py-2 total-price"><?= number_format($prixTotalProduit, 2) ?> $</td>
+                                <td class="border px-4 py-2">
+                                    <form method="POST" action="/produits/supprimer/<?= $id ?>" class="inline delete-form">
                                         <button type="submit" class="text-red-500 hover:text-red-700">
                                             <i class="fas fa-trash-alt"></i>
                                         </button>
@@ -65,11 +73,11 @@
                         <tfoot>
                             <tr class="bg-gray-200">
                                 <th colspan="3" class="border px-4 py-2 text-left">Total</th>
-                                <th colspan="2" class="border px-4 py-2"><?= number_format($totalPanier, 2) ?> $</th>
+                                <th colspan="2" class="border px-4 py-2 total-cart"><?= number_format($totalPanier, 2) ?> $</th>
                             </tr>
                             <tr class="bg-gray-100">
                                 <th colspan="3" class="border px-4 py-2 text-left">Quantité Totale</th>
-                                <th colspan="2" class="border px-4 py-2"><?= $quantiteTotale ?> article(s)</th>
+                                <th colspan="2" class="border px-4 py-2 total-quantity"><?= $quantiteTotale ?> article(s)</th>
                             </tr>
                         </tfoot>
                     </table>
@@ -83,13 +91,15 @@
                         <?php if ($utilisateurEstConnecte): 
                             $utilisateurId = $_SESSION['id_utilisateur']; 
                         ?>
-                            <form method="POST" action="/commande" class="w-1/4">
+                            <form id="commande-form" method="POST" action="/commande" class="w-1/4">
                                 <input type="hidden" name="id_utilisateur" value="<?= $utilisateurId ?? '' ?>">
-                                <input type="hidden" name="prix_total" value="<?= $totalPanier ?>">
-                                <?php foreach ($_SESSION['panier'] as $id => $produit): ?>
-                                    <input type="hidden" name="produits[<?= $id ?>][id_produit]" value="<?= $id ?>">
-                                    <input type="hidden" name="produits[<?= $id ?>][quantite]" value="<?= $produit['quantite'] ?>">
-                                <?php endforeach; ?>
+                                <input type="hidden" id="commande-prix-total" name="prix_total" value="<?= $totalPanier ?>">
+                                <div id="commande-produits">
+                                    <?php foreach ($_SESSION['panier'] as $id => $produit): ?>
+                                        <input type="hidden" name="produits[<?= $id ?>][id_produit]" value="<?= $id ?>">
+                                        <input type="hidden" name="produits[<?= $id ?>][quantite]" class="commande-quantite" data-produit-id="<?= $id ?>" value="<?= $produit['quantite'] ?>">
+                                    <?php endforeach; ?>
+                                </div>
                                 <button type="submit" class="py-2 px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-md w-full h-12 flex items-center justify-center">
                                     <i class="fas fa-shopping-cart mr-2"></i> 
                                 </button>
@@ -291,7 +301,7 @@
         <!-- Intégration du Chatbot -->
         <link rel="stylesheet" href="/chatbot/chatbot.css">
         <script src="/chatbot/chatbot.js" defer></script>
-        <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
         <!-- Intégration du Chatbot -->
         <div id="chatbot-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
             <div id="chatbot-trigger" style="background-color: #3b82f6; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
@@ -435,11 +445,158 @@
         </script>
     </body>
     <script>
+        // Fonction pour mettre à jour les totaux et les champs du formulaire de commande
+        function updateTotals() {
+            var total = 0;
+            var totalItems = 0;
+            var commandeForm = document.getElementById('commande-form');
+            var commandeProduitsDiv = document.getElementById('commande-produits');
+            
+            // Réinitialiser le contenu du div des produits
+            commandeProduitsDiv.innerHTML = '';
+            
+            // Parcourir toutes les lignes du panier
+            var rows = document.querySelectorAll('tr[data-product-id]');
+            
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var productId = row.getAttribute('data-product-id');
+                
+                // Récupérer la quantité et le prix unitaire
+                var quantityInput = row.querySelector('input.quantity-input');
+                if (!quantityInput) continue;
+                
+                var quantity = parseInt(quantityInput.value) || 0;
+                var unitPrice = parseFloat(row.getAttribute('data-unit-price')) || 0;
+                var totalPrice = quantity * unitPrice;
+                
+                // Mettre à jour le total de la ligne
+                var totalCell = row.querySelector('.total-price');
+                if (totalCell) {
+                    totalCell.textContent = totalPrice.toFixed(2) + ' $';
+                }
+                
+                // Ajouter les champs cachés pour le formulaire de commande
+                if (commandeForm && quantity > 0) {
+                    // Créer les champs pour le produit
+                    var idProduitInput = document.createElement('input');
+                    idProduitInput.type = 'hidden';
+                    idProduitInput.name = 'produits[' + productId + '][id_produit]';
+                    idProduitInput.value = productId;
+                    
+                    var quantiteInput = document.createElement('input');
+                    quantiteInput.type = 'hidden';
+                    quantiteInput.name = 'produits[' + productId + '][quantite]';
+                    quantiteInput.className = 'commande-quantite';
+                    quantiteInput.dataset.produitId = productId;
+                    quantiteInput.value = quantity;
+                    
+                    // Ajouter les champs au formulaire
+                    commandeProduitsDiv.appendChild(idProduitInput);
+                    commandeProduitsDiv.appendChild(quantiteInput);
+                    
+                    total += totalPrice;
+                    totalItems += quantity;
+                }
+            }
+            
+            // Mettre à jour le total général dans le formulaire
+            if (commandeForm) {
+                var totalInput = document.getElementById('commande-prix-total');
+                if (!totalInput) {
+                    totalInput = document.createElement('input');
+                    totalInput.type = 'hidden';
+                    totalInput.id = 'commande-prix-total';
+                    totalInput.name = 'prix_total';
+                    commandeForm.insertBefore(totalInput, commandeForm.firstChild);
+                }
+                totalInput.value = total.toFixed(2);
+            }
+            
+            // Mettre à jour l'affichage du total général
+            var totalElement = document.querySelector('.total-cart');
+            if (totalElement) {
+                totalElement.textContent = total.toFixed(2) + ' $';
+            }
+            
+            // Mettre à jour le nombre total d'articles
+            var quantityElement = document.querySelector('.total-quantity');
+            if (quantityElement) {
+                quantityElement.textContent = totalItems + ' article' + (totalItems !== 1 ? 's' : '');
+            }
+            
+            return total;
+        }
+
+        // Gérer la modification des quantités
+        function handleQuantityChange(e) {
+            var input = e.target;
+            var value = parseInt(input.value);
+            
+            // Validation
+            if (isNaN(value) || value < 1) {
+                input.value = 1;
+            } else if (value > 100) {
+                input.value = 100;
+            }
+            
+            // Mettre à jour les totaux
+            updateTotals();
+        }
+        
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mettre à jour les totaux initiaux
+            updateTotals();
+            
+            // Ajouter les écouteurs d'événements sur les champs de quantité
+            var quantityInputs = document.querySelectorAll('.quantity-input');
+            for (var i = 0; i < quantityInputs.length; i++) {
+                quantityInputs[i].addEventListener('input', handleQuantityChange);
+                quantityInputs[i].addEventListener('change', handleQuantityChange);
+            }
+            
+            // Gestion de la soumission du formulaire de commande
+            var commandeForm = document.getElementById('commande-form');
+            if (commandeForm) {
+                commandeForm.addEventListener('submit', function(e) {
+                    // Empêcher la soumission par défaut
+                    e.preventDefault();
+                    
+                    // Mettre à jour les totaux avant la soumission
+                    updateTotals();
+                    
+                    // Créer un objet FormData pour la soumission
+                    var formData = new FormData(this);
+                    
+                    // Envoyer la requête AJAX
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erreur réseau');
+                        }
+                        return response.text();
+                    })
+                    .then(() => {
+                        // Rediriger vers la page de profil après une commande réussie
+                        window.location.href = '/mon_profile';
+                    })
+                    .catch(error => {
+                        console.error('Erreur:', error);
+                        alert('Une erreur est survenue lors de la commande. Veuillez réessayer.');
+                    });
+                });
+            }
+        });
+
         function openModal(id) {
             document.getElementById(id).classList.remove('hidden');
-        }
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
         }
     </script>
 </html>

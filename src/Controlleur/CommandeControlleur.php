@@ -319,27 +319,31 @@ class CommandeControlleur {
                 exit();
             }
             
-            // Récupérer les données du panier depuis la session
-            if (empty($_SESSION['panier'])) {
-                throw new \Exception('Le panier est vide');
+            // Vérifier si les données du formulaire sont présentes
+            if (empty($_POST['produits']) || !is_array($_POST['produits'])) {
+                throw new \Exception('Aucun produit spécifié pour la commande');
             }
             
-            // Préparer les données pour la commande
+            // Initialiser les données de la commande
             $data = [
                 'id_utilisateur' => $_SESSION['id_utilisateur'],
-                'prix_total' => 0, // Sera calculé ci-dessous
+                'prix_total' => (float)($_POST['prix_total'] ?? 0),
                 'produits' => []
             ];
             
-            // Récupérer le prix total calculé depuis le formulaire
-            $data['prix_total'] = (float)($_POST['prix_total'] ?? 0);
-            
-            // Préparer les produits pour la commande
-            foreach ($_SESSION['panier'] as $id_produit => $produit) {
+            // Récupérer les produits du formulaire
+            foreach ($_POST['produits'] as $id_produit => $produit) {
+                $quantite = (int)($produit['quantite'] ?? 0);
+                
+                // S'assurer que la quantité est valide
+                if ($quantite < 1) {
+                    continue; // Ignorer les produits avec quantité invalide
+                }
+                
                 $data['produits'][] = [
                     'id_produit' => $id_produit,
-                    'quantite' => $produit['quantite'],
-                    'prix_unitaire' => $produit['prix_unitaire'] // Ajout du prix unitaire pour référence
+                    'quantite' => $quantite,
+                    'prix_unitaire' => $produit['prix_unitaire']
                 ];
             }
             
