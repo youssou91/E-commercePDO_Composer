@@ -98,6 +98,7 @@
                                     <?php foreach ($_SESSION['panier'] as $id => $produit): ?>
                                         <input type="hidden" name="produits[<?= $id ?>][id_produit]" value="<?= $id ?>">
                                         <input type="hidden" name="produits[<?= $id ?>][quantite]" class="commande-quantite" data-produit-id="<?= $id ?>" value="<?= $produit['quantite'] ?>">
+                                        <input type="hidden" name="produits[<?= $id ?>][prix_unitaire]" value="<?= $produit['prix_unitaire'] ?>">
                                     <?php endforeach; ?>
                                 </div>
                                 <button type="submit" class="py-2 px-4 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-md w-full h-12 flex items-center justify-center">
@@ -487,13 +488,23 @@
                     var quantiteInput = document.createElement('input');
                     quantiteInput.type = 'hidden';
                     quantiteInput.name = 'produits[' + productId + '][quantite]';
-                    quantiteInput.className = 'commande-quantite';
-                    quantiteInput.dataset.produitId = productId;
                     quantiteInput.value = quantity;
+
+                    var prixInput = document.createElement('input');
+                    prixInput.type = 'hidden';
+                    prixInput.name = 'produits[' + productId + '][prix_unitaire]';
+                    prixInput.value = unitPrice;
+
+                    var nomInput = document.createElement('input');
+                    nomInput.type = 'hidden';
+                    nomInput.name = 'produits[' + productId + '][nom]';
+                    nomInput.value = row.querySelector('td:first-child').textContent.trim();
                     
                     // Ajouter les champs au formulaire
                     commandeProduitsDiv.appendChild(idProduitInput);
                     commandeProduitsDiv.appendChild(quantiteInput);
+                    commandeProduitsDiv.appendChild(prixInput);
+                    commandeProduitsDiv.appendChild(nomInput);
                     
                     total += totalPrice;
                     totalItems += quantity;

@@ -44,9 +44,6 @@
                                     </td>
                                     <td><?= number_format($order['montant_total'] ?? 0, 2, ',', ' ') ?> €</td>
                                     <td>
-                                        <a href="/profile/details/<?= $order['id_commande'] ?? $order['id'] ?>" class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-eye"></i> Détails
-                                        </a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

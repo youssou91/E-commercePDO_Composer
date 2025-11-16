@@ -325,27 +325,33 @@ class CommandeControlleur {
             }
             
             // Initialiser les données de la commande
-            $data = [
-                'id_utilisateur' => $_SESSION['id_utilisateur'],
-                'prix_total' => (float)($_POST['prix_total'] ?? 0),
-                'produits' => []
-            ];
-            
-            // Récupérer les produits du formulaire
+            $prix_total_calcule = 0;
+            $produits_commande = [];
+
+            // Récupérer les produits du formulaire et calculer le total
             foreach ($_POST['produits'] as $id_produit => $produit) {
                 $quantite = (int)($produit['quantite'] ?? 0);
-                
-                // S'assurer que la quantité est valide
-                if ($quantite < 1) {
-                    continue; // Ignorer les produits avec quantité invalide
+                $prix_unitaire = (float)($produit['prix_unitaire'] ?? 0);
+
+                if ($quantite > 0 && $prix_unitaire > 0) {
+                    $prix_total_calcule += $quantite * $prix_unitaire;
+                    $produits_commande[] = [
+                        'id_produit' => $id_produit,
+                        'quantite' => $quantite,
+                        'prix_unitaire' => $prix_unitaire
+                    ];
                 }
-                
-                $data['produits'][] = [
-                    'id_produit' => $id_produit,
-                    'quantite' => $quantite,
-                    'prix_unitaire' => $produit['prix_unitaire']
-                ];
             }
+
+            if (empty($produits_commande)) {
+                throw new \Exception('La commande ne contient aucun produit valide.');
+            }
+
+            $data = [
+                'id_utilisateur' => $_SESSION['id_utilisateur'],
+                'prix_total' => $prix_total_calcule,
+                'produits' => $produits_commande
+            ];
             
             // Ajouter la commande
             $id_commande = $this->commandeModel->addCommande($data);

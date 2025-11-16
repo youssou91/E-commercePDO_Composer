@@ -86,30 +86,6 @@ if (isset($_POST['action']) && $_POST['action'] === 'modifier_commande' && isset
         exit();
     }
 }
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-ini_set('log_errors', 1);
-ini_set('error_log', __DIR__ . '/../logs/error.log');
-
-// Afficher toutes les erreurs
-error_reporting(-1);
-ini_set('display_errors', 'On');
-set_error_handler(function($errno, $errstr, $errfile, $errline) {
-    echo "<div style='color:red;background:#fee;padding:10px;margin:10px;border:1px solid #fcc;'>";
-    echo "<strong>Erreur PHP:</strong> $errstr<br>";
-    echo "Fichier: $errfile à la ligne $errline<br>";
-    echo "</div>";
-    return true;
-});
-
-// Gestion des exceptions non attrapées
-set_exception_handler(function($e) {
-    echo "<div style='color:red;background:#fee;padding:10px;margin:10px;border:1px solid #fcc;'>";
-    echo "<strong>Exception non attrapée:</strong> " . $e->getMessage() . "<br>";
-    echo "Fichier: " . $e->getFile() . " à la ligne " . $e->getLine() . "<br>";
-    echo "<pre>" . $e->getTraceAsString() . "</pre>";
-    echo "</div>";
-});
 
 // Définir le fuseau horaire par défaut
 date_default_timezone_set('America/Toronto');
@@ -264,7 +240,6 @@ $router->map('GET, POST', '/profile/paiement/[i:id_commande]', function($id_comm
     // Appeler la méthode payOrder avec le paramètre modal
     $profileController->payOrder($id_commande, $isAjax);
 }, 'paiement');
-$router->map('GET', '/profile/details/[i:id_commande]', 'ProfileControlleur::getOrderDetails', 'details');
 $router->map('GET', '/profile/annuler/[i:id_commande]', 'ProfileControlleur::changeOrderStatus', 'annuler');
 $router->map('POST', '/profile/update-password', 'ProfileControlleur::updatePassword', 'update_password');
 //utilisateurs
@@ -298,6 +273,7 @@ $router->map('GET', '/utilisateur/[i:id]/commandes', 'ProfileControlleur::userOr
 
 // User edit routes
 $router->map('POST', '/user/edit/[i:id]', 'ProfileControlleur::updateUser', 'update_user');
+$router->map('GET', '/api/commande/[i:id_commande]', 'ProfileControlleur::getOrderDetailsJson', 'api_commande_details');
 $router->map('GET', '/utilisateur/[i:id]/modifier', 'ProfileControlleur::editUserForm', 'edit_user_form');
 
 // API Routes
@@ -424,8 +400,11 @@ try {
         // Par défaut, on affiche le header et le footer
         $noHeaderFooter = false;
         
-        // Inclure le header avant d'exécuter le contrôleur
-        if (!(isset($GLOBALS['noHeaderFooter']) && $GLOBALS['noHeaderFooter'] === true)) {
+        // Détecter si c'est une route API
+        $isApiRoute = strpos($_SERVER['REQUEST_URI'], '/api/') === 0;
+
+        // Inclure le header avant d'exécuter le contrôleur, sauf pour les routes API
+        if (!$isApiRoute && !(isset($GLOBALS['noHeaderFooter']) && $GLOBALS['noHeaderFooter'] === true)) {
             require '../static/header.php';
         }
         
@@ -550,9 +529,8 @@ try {
             }
         }
         
-        // Inclure le footer sauf si $noHeaderFooter est vrai ou si c'est une requête AJAX
-        if (!(isset($GLOBALS['noHeaderFooter']) && $GLOBALS['noHeaderFooter'] === true) && 
-            (empty($_SERVER['HTTP_X_REQUESTED_WITH']) || strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) != 'xmlhttprequest')) {
+        // Inclure le footer sauf si c'est une route API ou si le flag noHeaderFooter est positionné
+        if (!$isApiRoute && !(isset($GLOBALS['noHeaderFooter']) && $GLOBALS['noHeaderFooter'] === true)) {
             require '../static/footer.php';
         }
     } else {

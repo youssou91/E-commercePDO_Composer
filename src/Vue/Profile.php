@@ -551,15 +551,12 @@ if (isset($_POST['action'])) {
     </div>
 </div>
 
+
 <!-- Modal pour les détails de la commande -->
 <div id="orderDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
     <div class="bg-white rounded-lg shadow-xl w-11/12 md:w-3/4 lg:w-2/3 max-h-[90vh] overflow-y-auto">
         <div id="orderDetailsContent" class="p-4">
             <!-- Le contenu sera chargé dynamiquement ici -->
-            <div class="text-center py-8">
-                <i class="fas fa-spinner fa-spin text-blue-500 text-4xl mb-4"></i>
-                <p class="text-gray-600">Chargement des détails de la commande...</p>
-            </div>
         </div>
     </div>
 </div>
@@ -583,55 +580,66 @@ if (isset($_POST['action'])) {
         const modal = document.getElementById('orderDetailsModal');
         const content = document.getElementById('orderDetailsContent');
         
-        // Afficher la modale
         modal.classList.remove('hidden');
-        
-        // Afficher le chargement
-        content.innerHTML = `
-            <div class="text-center py-8">
-                <i class="fas fa-spinner fa-spin text-blue-500 text-4xl mb-4"></i>
-                <p class="text-gray-600">Chargement des détails de la commande...</p>
-            </div>`;
-        
-        // Charger les détails via AJAX
-        fetch(`/profile/details/${orderId}`, {
+        content.innerHTML = `<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-blue-500 text-4xl"></i><p class="mt-2">Chargement...</p></div>`;
+
+        fetch(`/api/commande/${orderId}`, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         })
-        .then(response => response.text())
-        .then(html => {
-            content.innerHTML = html;
-        })
-        .catch(error => {
-            console.error('Erreur:', error);
-            content.innerHTML = `
-                <div class="text-center py-8 text-red-500">
-                    <i class="fas fa-exclamation-triangle text-4xl mb-4"></i>
-                    <p>Une erreur est survenue lors du chargement des détails de la commande.</p>
-                </div>`;
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const { commande, produits } = data;
+                    let produitsHtml = produits.map(p => `
+                        <tr class="border-b">
+                            <td class="py-2 px-4">${p.nom}</td>
+                            <td class="py-2 px-4 text-center">${p.quantite}</td>
+                            <td class="py-2 px-4 text-right">${parseFloat(p.prix_unitaire).toFixed(2)} $</td>
+                            <td class="py-2 px-4 text-right">${(p.quantite * p.prix_unitaire).toFixed(2)} $</td>
+                        </tr>
+                    `).join('');
+
+                    content.innerHTML = `
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-semibold">Détails Commande #${commande.id_commande}</h3>
+                            <button onclick="closeOrderDetailsModal()" class="text-gray-500 hover:text-gray-800">&times;</button>
+                        </div>
+                        <p><strong>Date:</strong> ${new Date(commande.date_commande).toLocaleDateString('fr-FR')}</p>
+                        <p><strong>Statut:</strong> ${commande.statut}</p>
+                        <table class="min-w-full mt-4">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="py-2 px-4 text-left">Produit</th>
+                                    <th class="py-2 px-4 text-center">Quantité</th>
+                                    <th class="py-2 px-4 text-right">Prix Unit.</th>
+                                    <th class="py-2 px-4 text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>${produitsHtml}</tbody>
+                            <tfoot>
+                                <tr class="font-semibold bg-gray-50">
+                                    <td colspan="3" class="py-2 px-4 text-right">Total Commande:</td>
+                                    <td class="py-2 px-4 text-right">${parseFloat(commande.prix_total).toFixed(2)} $</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    `;
+                } else {
+                    content.innerHTML = `<div class="text-red-500 p-4">${data.message}</div>`;
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                content.innerHTML = `<div class="text-red-500 p-4">Une erreur est survenue.</div>`;
+            });
     }
-    
-    // Fonction pour fermer la modale des détails de commande
+
     function closeOrderDetailsModal() {
         document.getElementById('orderDetailsModal').classList.add('hidden');
     }
-    
-    // Gestion des clics en dehors de la modale pour la fermer
-    document.getElementById('orderDetailsModal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeOrderDetailsModal();
-        }
-    });
-    
-    // Gestion de la touche Échap pour fermer la modale
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-            closeOrderDetailsModal();
-        }
-    });
-    
+
     // Gestion des modales existantes
     document.querySelectorAll('[data-modal-target]').forEach(button => {
         button.addEventListener('click', function() {
@@ -656,35 +664,6 @@ if (isset($_POST['action'])) {
         }
     }
     
-    // Fonction pour ouvrir la modale des détails de la commande
-    function openOrderDetailsModal(orderId) {
-        // Afficher la modale
-        document.getElementById('orderDetailsModal').classList.remove('hidden');
-        
-        // Charger les détails de la commande via AJAX
-        fetch(`/profile/details/${orderId}`)
-            .then(response => response.text())
-            .then(html => {
-                // Mettre directement le contenu HTML dans la modale
-                document.getElementById('orderDetailsContent').innerHTML = html;
-            })
-            .catch(error => {
-                console.error('Erreur lors du chargement des détails de la commande:', error);
-                document.getElementById('orderDetailsContent').innerHTML = 
-                    '<div class="text-red-500 p-4">Une erreur est survenue lors du chargement des détails de la commande.</div>';
-            });
-    }
-
-    // Fonction pour fermer la modale des détails
-    function closeOrderDetailsModal() {
-        document.getElementById('orderDetailsModal').classList.add('hidden');
-        // Réinitialiser le contenu pour le prochain chargement
-        document.getElementById('orderDetailsContent').innerHTML = `
-            <div class="text-center py-8">
-                <i class="fas fa-spinner fa-spin text-blue-500 text-4xl mb-4"></i>
-                <p class="text-gray-600">Chargement des détails de la commande...</p>
-            </div>`;
-    }
     
     // Fonction pour fermer la modale de paiement
     function closePaymentModal() {
@@ -702,20 +681,11 @@ if (isset($_POST['action'])) {
     
     // Fermer la modale en cliquant en dehors du contenu
     document.addEventListener('DOMContentLoaded', function() {
-        const modal = document.getElementById('orderDetailsModal');
-        if (modal) {
-            modal.addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeOrderDetailsModal();
-                }
-            });
-        }
         
         // Fermer la modale avec la touche Échap
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                closeOrderDetailsModal();
-                closePaymentModal();
+                 closePaymentModal();
             }
         });
         

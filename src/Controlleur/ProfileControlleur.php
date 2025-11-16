@@ -402,27 +402,31 @@ class ProfileControlleur {
             die('Erreur : ' . $e->getMessage());
         }
     }
-    // Affiche les détails d'une commande (pour modale ou page complète)
-    public function getOrderDetails($id_commande) {
+    /**
+     * Récupère les détails d'une commande et de ses produits au format JSON.
+     * @param int $id_commande L'ID de la commande.
+     */
+    public function getOrderDetailsJson($id_commande) {
+        header('Content-Type: application/json');
         try {
-            // Vérification de l'authentification
             if (!isset($_SESSION['id_utilisateur'])) {
-                throw new Exception('Veuillez vous connecter pour voir cette page');
+                http_response_code(403);
+                echo json_encode(['success' => false, 'message' => 'Authentification requise.']);
+                exit;
             }
 
-            // Récupération des données de la commande
             $stmt = $this->db->prepare("SELECT * FROM commande WHERE id_commande = ?");
             $stmt->execute([$id_commande]);
             $commande = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-            // Vérification des droits d'accès
             if (!$commande || $commande['id_utilisateur'] != $_SESSION['id_utilisateur']) {
-                throw new Exception('Commande introuvable ou accès refusé');
+                http_response_code(404);
+                echo json_encode(['success' => false, 'message' => 'Commande introuvable ou accès refusé.']);
+                exit;
             }
 
-            // Récupération des produits de la commande
             $stmt = $this->db->prepare(
-                "SELECT p.*, pc.quantite, pc.prix_unitaire as prix_vente 
+                "SELECT p.nom, pc.quantite, pc.prix_unitaire 
                  FROM produit_commande pc 
                  JOIN produits p ON pc.id_produit = p.id_produit 
                  WHERE pc.id_commande = ?"
@@ -430,115 +434,17 @@ class ProfileControlleur {
             $stmt->execute([$id_commande]);
             $produits = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-            // Définir le flag pour empêcher l'inclusion du header/footer
-            $GLOBALS['noHeaderFooter'] = true;
-
-            // Générer le contenu HTML directement
-            ob_start();
-            ?>
-            <div class="p-4 relative">
-                <button onclick="closeOrderDetailsModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 focus:outline-none z-10">
-                    <i class="fas fa-times text-2xl"></i>
-                    <span class="sr-only">Fermer</span>
-                </button>
-                
-                <div class="mb-4">
-                    <h3 class="text-lg font-semibold text-gray-800">Commande #<?= htmlspecialchars($commande['id_commande'] ?? 'N/A') ?></h3>
-                    <div class="text-sm text-gray-600 mb-1">
-                        <span class="font-medium">Date :</span> 
-                        <?= date('d/m/Y H:i', strtotime($commande['date_commande'])) ?>
-                    </div>
-                    <div class="text-sm text-gray-700 mb-4">
-                        <span class="font-medium">Statut :</span>
-                        <span class="px-3 py-1.5 text-sm font-medium rounded-full ml-2
-                            <?= ($commande['statut'] ?? '') === 'Payée' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' ?>">
-                            <?= htmlspecialchars($commande['statut'] ?? 'Inconnu') ?>
-                        </span>
-                    </div>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="min-w-full bg-white border">
-                        <thead>
-                            <tr class="bg-gray-100">
-                                <th class="px-4 py-2 text-left">Produit</th>
-                                <th class="px-4 py-2 text-center">Quantité</th>
-                                <th class="px-4 py-2 text-right">Prix unitaire</th>
-                                <th class="px-4 py-2 text-right">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php 
-                            $total = 0;
-                            if (!empty($produits)): 
-                                foreach ($produits as $produit): 
-                                    $prix = $produit['prix_vente'] ?? $produit['prix_unitaire'];
-                                    $sousTotal = $prix * $produit['quantite'];
-                                    $total += $sousTotal;
-                            ?>
-                                <tr class="border-b">
-                                    <td class="px-4 py-3"><?= htmlspecialchars($produit['nom'] ?? 'Produit inconnu') ?></td>
-                                    <td class="px-4 py-3 text-center"><?= $produit['quantite'] ?></td>
-                                    <td class="px-4 py-3 text-right"><?= number_format($prix, 2) ?> $</td>
-                                    <td class="px-4 py-3 text-right font-medium"><?= number_format($sousTotal, 2) ?> $</td>
-                                </tr>
-                            <?php 
-                                endforeach; 
-                            else: 
-                            ?>
-                                <tr>
-                                    <td colspan="4" class="px-4 py-3 text-center text-gray-500">
-                                        Aucun produit trouvé pour cette commande
-                                    </td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                        <tfoot>
-                            <tr class="bg-gray-50 font-semibold">
-                                <td colspan="3" class="px-4 py-3 text-right">Total :</td>
-                                <td class="px-4 py-3 text-right text-blue-600">
-                                    <?= number_format($commande['prix_total'] ?? $total, 2) ?> $
-                                </td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
-            <?php
-            $content = ob_get_clean();
-            
-            // Pour les requêtes AJAX (modale)
-            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
-                strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-                echo $content;
-                exit();
-            }
-            
-            // Pour l'affichage en page complète
-            ?>
-            <!DOCTYPE html>
-            <html lang="fr">
-            <head>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Détails de la commande #<?= htmlspecialchars($commande['id_commande'] ?? '') ?></title>
-                <link href="/css/tailwind.css" rel="stylesheet">
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-            </head>
-            <body class="bg-gray-50">
-                <div class="container mx-auto px-4 py-8">
-                    <?= $content ?>
-                </div>
-            </body>
-            </html>
-            <?php
-            exit();
+            echo json_encode(['success' => true, 'commande' => $commande, 'produits' => $produits]);
+            exit;
 
         } catch (\Exception $e) {
-            // En cas d'erreur, afficher un message clair
-            die('Erreur : ' . $e->getMessage());
+            http_response_code(500);
+            error_log("Erreur dans getOrderDetailsJson: " . $e->getMessage());
+            echo json_encode(['success' => false, 'message' => 'Une erreur interne est survenue.']);
+            exit;
         }
     }
+
     //fonction pour changer le status de la commande
     public function changeOrderStatus($id_commande, $status) {
         $userModel = new UserModel($this->db);

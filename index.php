@@ -146,7 +146,6 @@ $router->map('GET', '/profile/edit', 'ProfileControlleur::editProfile', 'edit_pr
 $router->map('POST', '/profile/edit', 'ProfileControlleur::updateProfile', 'update_profile');
 ///
 $router->map('GET, POST', '/profile/paiement/[i:id_commande]', 'ProfileControlleur::payOrder', 'paiement');
-$router->map('GET', '/profile/details/[i:id_commande]', 'ProfileControlleur::getOrderDetails', 'details');
 $router->map('GET', '/profile/annuler/[i:id_commande]', 'ProfileControlleur::changeOrderStatus', 'annuler');
 //utilisateurs
 
