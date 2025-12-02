@@ -55,26 +55,25 @@ conversation = {
     "spécifications": "Voici comment comparer les produits :\n\n💾 Stockage : 128GB à 2TB\n📱 RAM : 4GB à 64GB\n⚡ Processeurs : Intel i3 à i9, AMD Ryzen\n🖥️ Écrans : 13\" à 17\" pour portables, 24\" à 85\" pour TV\n🔋 Autonomie : Jusqu'à 20h pour les appareils mobiles\n\nQuelles spécifications sont importantes pour vous ?",
     
     # Promotions
-    "promo": "Nous avons actuellement des promotions sur plusieurs produits. Voulez-vous que je vous montre nos offres du moment ?",
     "solde": "Les soldes sont en cours ! Découvrez nos réductions exceptionnelles sur une sélection d'articles.",
     "réduction": "Nous proposons régulièrement des réductions. Voulez-vous que je vous informe des meilleures offres ?",
     
     # Prix et promotions
-    "prix": "Nos prix sont compétitifs et varient selon les gammes :\n\n💰 Économique : 100€ - 300€\n💎 Milieu de gamme : 300€ - 800€\n🚀 Haut de gamme : 800€ et +\n\nNous proposons également des offres spéciales pour les étudiants et la livraison est gratuite à partir de 50€ d'achat !",
+    "prix": "Nos prix sont compétitifs et varient selon les gammes :\n\n💰 Économique : 100$ - 300$\n💎 Milieu de gamme : 300$ - 800$\n🚀 Haut de gamme : 800$ et +\n\nNous proposons également des offres spéciales pour les étudiants et la livraison est gratuite à partir de 50$ d'achat !",
     "cher": "Nous avons des produits pour tous les budgets :\n\n- Entrée de gamme : idéal pour un usage occasionnel\n- Milieu de gamme : bon rapport qualité/prix\n- Haut de gamme : performances optimales\n\nQuelle gamme vous conviendrait le mieux ?",
-    "coût": "Le coût dépend des fonctionnalités recherchées. Par exemple :\n\n💻 Ordinateurs portables :\n- Basique : 300-600€\n- Polyvalent : 600-1200€\n- Professionnel : 1200€+\n\n📱 Smartphones :\n- Entrée de gamme : 100-300€\n- Milieu de gamme : 300-700€\n- Premium : 700€+\n\nAvez-vous un budget en tête ?",
+    "coût": "Le coût dépend des fonctionnalités recherchées. Par exemple :\n\n💻 Ordinateurs portables :\n- Basique : 300-600$\n- Polyvalent : 600-1200$\n- Professionnel : 1200$+\n\n📱 Smartphones :\n- Entrée de gamme : 100-300$\n- Milieu de gamme : 300-700$\n- Premium : 700$+\n\nAvez-vous un budget en tête ?",
     "promo": "🔥 PROMOTIONS DU MOMENT 🔥\n\n- Réduction de 20% sur toute la gamme gaming\n- Écouteurs sans fil à -30%\n- Offre spéciale : PC portable + souris + sac à dos\n- Livraison gratuite sur tout le site\n\nVoulez-vous que je vous montre les offres d'une catégorie en particulier ?",
     
     # Localisation
-    "local": "Notre entreprise est basée à Paris, mais nous livrons dans le monde entier !",
-    "adresse": "Notre siège social est situé au 123 Rue du Commerce, 75001 Paris. Nous sommes ouverts du lundi au samedi de 9h à 19h.",
-    "trouver": "Vous pouvez nous trouver au 123 Rue du Commerce, 75001 Paris. Avez-vous besoin d'indications pour venir ?",
-    "paris": "Oui, nous sommes basés à Paris. Notre magasin principal se trouve au 123 Rue du Commerce, 75001 Paris.",
+    "local": "Notre entreprise est basée à Montréal, mais nous livrons dans le monde entier !",
+    "adresse": "Notre siège social est situé au 123 Rue du Commerce, Montréal, QC H3B 4W8. Nous sommes ouverts du lundi au samedi de 9h à 19h.",
+    "trouver": "Vous pouvez nous trouver au 123 Rue du Commerce, Montréal, QC H3B 4W8. Avez-vous besoin d'indications pour venir ?",
+    "montreal": "Oui, nous sommes basés à Montréal. Notre magasin principal se trouve au 123 Rue du Commerce, Montréal, QC H3B 4W8.",
     
     # Livraison
     "livraison": "Nous proposons différentes options de livraison : standard (3-5 jours), express (1-2 jours) et point relais. Laquelle vous intéresse ?",
-    "livrer": "Nous livrons partout en France métropolitaine. Les délais de livraison varient de 1 à 5 jours ouvrés selon l'option choisie.",
-    "frais de port": "Les frais de port dépendent du montant de votre commande et du mode de livraison choisi. La livraison est offerte à partir de 50€ d'achat !",
+    "livrer": "Nous livrons partout au Canada. Les délais de livraison varient de 1 à 5 jours ouvrés selon l'option choisie.",
+    "frais de port": "Les frais de port dépendent du montant de votre commande et du mode de livraison choisi. La livraison est offerte à partir de 50$ d'achat !",
     
     # Paiement
     "paiement": "Nous acceptons les cartes bancaires, PayPal, virements bancaires et le paiement à la livraison. Quelle méthode préférez-vous ?",
